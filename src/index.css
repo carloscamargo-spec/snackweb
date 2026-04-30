@@ -35,7 +35,7 @@
 }
 
 * { box-sizing: border-box; }
-html, body { margin: 0; padding: 0; }
+html, body { margin: 0; padding: 0; overflow-x: hidden; }
 body {
   font-family: 'Inter', system-ui, -apple-system, sans-serif;
   background: var(--black);
@@ -459,7 +459,11 @@ a { color: inherit; text-decoration: none; }
 .bear-chat-inner:hover .bear-chat-avatar { transform: scale(1.04); }
 @keyframes bearBubblePop { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-3px); } }
 @keyframes bearAvatarBob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(2px); } }
-@media (max-width: 720px) { .bear-chat { right: 12px; } .bear-chat-bubble { display: none; } .bear-chat-avatar { width: 44px; height: 44px; } }
+@media (max-width: 720px) {
+  .bear-chat { right: 12px; }
+  .bear-chat-bubble { font-size: 11px; padding: 8px 11px; max-width: calc(100vw - 90px); white-space: normal; line-height: 1.3; }
+  .bear-chat-avatar { width: 44px; height: 44px; }
+}
 
 /* ── Bear chat modal ── */
 .bear-modal-overlay { position: fixed; inset: 0; z-index: 9999; background: rgba(0,0,0,0.55); backdrop-filter: blur(4px); display: flex; align-items: flex-end; justify-content: flex-end; padding: 20px; touch-action: none; }

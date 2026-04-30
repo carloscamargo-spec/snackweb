@@ -2,11 +2,15 @@ import { useRef, useState, useEffect, useCallback } from 'react';
 
 const BUBBLE_MSGS = ['HEY hablemos', 'Dale click aquí', 'Vamos por todo.!!!'];
 
-type Cta = { label: string; href: string };
+type Cta = { label: string; href?: string; trigger?: 'meeting' };
 type Msg = { role: 'user' | 'assistant'; content: string; cta?: Cta[] };
 
 const GREETINGS: Msg[] = [
-  { role: 'assistant', content: 'Grrrr... 👋 Soy GRIZZ. El oso que sabe cómo romper el mercado del entretenimiento y las apuestas en LATAM. ¿Qué tienes en mente?' },
+  {
+    role: 'assistant',
+    content: 'Grrrr... 👋 Soy GRIZZ. El oso que sabe cómo romper el mercado del entretenimiento y las apuestas en LATAM. ¿Qué tienes en mente?',
+    cta: [{ label: '🚀 Quiero agendar una reunión que me vuele la cabeza', trigger: 'meeting' }],
+  },
 ];
 
 // Turn 1 — qualify: ask about their market / operation
@@ -167,6 +171,16 @@ export default function BearMascot() {
     };
   }, [open]);
 
+  const triggerMeeting = useCallback(() => {
+    if (meetingOffered) return;
+    setMeetingOffered(true);
+    setLoading(true);
+    setTimeout(() => {
+      setMessages((m) => [...m, { role: 'assistant', ...MEETING_REPLY }]);
+      setLoading(false);
+    }, 600);
+  }, [meetingOffered]);
+
   const send = useCallback(async () => {
     const text = input.trim();
     if (!text || loading) return;
@@ -226,10 +240,14 @@ export default function BearMascot() {
                     {m.content}
                     {m.cta && (
                       <div className="bear-msg-cta">
-                        {m.cta.map((btn) => (
-                          <a key={btn.href} href={btn.href} target="_blank" rel="noopener" className="bear-cta-btn">
+                        {m.cta.map((btn) => btn.href ? (
+                          <a key={btn.label} href={btn.href} target="_blank" rel="noopener" className="bear-cta-btn">
                             {btn.label}
                           </a>
+                        ) : (
+                          <button key={btn.label} className="bear-cta-btn" onClick={triggerMeeting}>
+                            {btn.label}
+                          </button>
                         ))}
                       </div>
                     )}
