@@ -46,7 +46,7 @@ export default function VideoEmbed() {
       <div className="embed-frame reveal" style={{ marginTop: 18 }}>
         <iframe
           ref={iframeRef}
-          src="https://www.youtube.com/embed/Ncrsi9qwafE?rel=0&enablejsapi=1&autoplay=0"
+          src="https://www.youtube.com/embed/Ncrsi9qwafE?rel=0&enablejsapi=1&autoplay=0&modestbranding=1&showinfo=0&iv_load_policy=3&color=white"
           title="Snack & Soda Manifesto"
           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
           allowFullScreen

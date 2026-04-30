@@ -248,7 +248,7 @@ a { color: inherit; text-decoration: none; }
 
 .embed { background: var(--black); padding: clamp(32px, 6vh, 80px) var(--page-pad); }
 .embed-frame {
-  position: relative; aspect-ratio: 16 / 9; width: 80%; margin: 0 auto; border-radius: 4px;
+  position: relative; aspect-ratio: 16 / 9; width: 85%; margin: 0 auto; border-radius: 4px;
   overflow: hidden; border: 1px solid rgba(255,255,255,0.08); background: #000;
 }
 .embed-frame iframe { position: absolute; inset: 0; width: 100%; height: 100%; }
