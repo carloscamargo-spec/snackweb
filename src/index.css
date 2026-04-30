@@ -17,7 +17,7 @@
   --neutral-500: #6b6b6b;
   --neutral-400: #8a8a8a;
   --neutral-300: #b8b8b8;
-  --fs-mega: clamp(4.5rem, 16vw, 16rem);
+  --fs-mega: clamp(3.4rem, 12vw, 12rem);
   --fs-display: clamp(3rem, 9vw, 9rem);
   --fs-h1: clamp(2.25rem, 5.5vw, 5.5rem);
   --fs-h2: clamp(1.75rem, 3.5vw, 3.25rem);
@@ -31,7 +31,7 @@
   --label-gap: 10px;
   --display-weight: 900;
   --display-tracking: -0.045em;
-  --display-leading: 0.88;
+  --display-leading: 0.82;
 }
 
 * { box-sizing: border-box; }
