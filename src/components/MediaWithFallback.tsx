@@ -63,7 +63,7 @@ export default function MediaWithFallback({ src, className, fallbackBg, fallback
   }
 
   return (
-    <div className={className} style={{ position: 'relative', overflow: 'hidden' }}>
+    <div className={className} style={{ overflow: 'hidden' }}>
       <video ref={videoRef} style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }} src={src} autoPlay muted loop playsInline />
       {loopFade && (
         <div style={{
