@@ -290,32 +290,37 @@ a { color: inherit; text-decoration: none; }
 
 .framework { background: var(--black); position: relative; overflow: hidden; }
 
-.fw-infinity { padding: 0 var(--page-pad); display: flex; justify-content: center; margin: clamp(24px, 5vh, 56px) 0 0; }
-.fw-infinity svg { width: clamp(280px, 72vw, 680px); height: auto; overflow: visible; }
+.fw-wrap { display: flex; justify-content: center; padding: clamp(16px, 4vh, 48px) var(--page-pad) clamp(32px, 6vh, 72px); }
+.fw-svg { width: clamp(300px, 76vw, 700px); height: auto; overflow: visible; }
 
-/* segments: bright at start, dim for rest of 9s cycle */
+/* ── section segments: fade in smoothly, hold, fade out ── */
 @keyframes fw-seg-pulse {
-  0%   { opacity: 1; }
-  28%  { opacity: 1; }
-  42%  { opacity: 0.1; }
-  100% { opacity: 0.1; }
+  0%   { opacity: 0.06; }
+  6%   { opacity: 0.85; }
+  30%  { opacity: 0.85; }
+  44%  { opacity: 0.06; }
+  100% { opacity: 0.06; }
 }
-.fw-seg { opacity: 0.1; animation: fw-seg-pulse linear infinite; }
+.fw-seg-glow, .fw-seg-line {
+  opacity: 0.06;
+  animation: fw-seg-pulse 9s ease-in-out infinite;
+}
 
-/* traveling light */
-@keyframes fw-travel { to { stroke-dashoffset: -9999; } }
-.fw-travel { animation: fw-travel linear infinite; }
+/* ── traveling comet ── */
+@keyframes fw-comet { to { stroke-dashoffset: -1000; } }
+.fw-comet-trail { animation: fw-comet 9s linear infinite; }
 
-/* labels sync with their segment */
+/* ── labels: sync with segment ── */
 @keyframes fw-label-pulse {
-  0%   { opacity: 1; }
-  28%  { opacity: 1; }
-  42%  { opacity: 0.3; }
-  100% { opacity: 0.3; }
+  0%   { opacity: 0.2; }
+  6%   { opacity: 1; }
+  30%  { opacity: 1; }
+  44%  { opacity: 0.2; }
+  100% { opacity: 0.2; }
 }
-.fw-label { opacity: 0.3; animation: fw-label-pulse linear infinite; }
-.fw-acr  { font-family: 'Inter', sans-serif; font-size: 18px; font-weight: 900; letter-spacing: -0.03em; fill: #e6fd31; text-transform: uppercase; }
-.fw-name { font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: 0.12em; fill: rgba(230,253,49,0.6); text-transform: uppercase; }
+.fw-label { opacity: 0.2; animation: fw-label-pulse 9s ease-in-out infinite; }
+.fw-acr  { font-family: 'Inter', sans-serif; font-size: 17px; font-weight: 900; letter-spacing: -0.02em; fill: #e6fd31; }
+.fw-name { font-family: 'JetBrains Mono', monospace; font-size: 8.5px; letter-spacing: 0.1em; fill: rgba(230,253,49,0.55); text-transform: uppercase; }
 
 .cases { background: var(--neutral-950); position: relative; overflow: hidden; }
 .cases-track-wrap { position: relative; padding: 0 var(--page-pad); }

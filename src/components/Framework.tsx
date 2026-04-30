@@ -1,56 +1,34 @@
-import { useEffect, useRef } from 'react';
 import { FRAMEWORK_ITEMS } from '../data/framework';
 
-const D = "M 300,175 C 300,90 210,40 155,40 C 55,40 15,115 15,175 C 15,235 55,310 155,310 C 210,310 300,260 300,175 C 300,90 390,40 445,40 C 545,40 585,115 585,175 C 585,235 545,310 445,310 C 390,310 300,260 300,175 Z";
+// Symmetric lemniscate: two circles r=110, centers at (150,175) and (450,175)
+// Bezier circle approximation: k = r * 0.5523 ≈ 61
+const D = [
+  "M 300,175",
+  "C 300,114 389,65 450,65",
+  "C 511,65 560,114 560,175",
+  "C 560,236 511,285 450,285",
+  "C 389,285 300,236 300,175",
+  "C 300,114 211,65 150,65",
+  "C 89,65 40,114 40,175",
+  "C 40,236 89,285 150,285",
+  "C 211,285 300,236 300,175 Z",
+].join(" ");
 
-const LABELS = [
-  { x: 110, y: 34, name: 'Sistema de\nApuesta Narrativa' },
-  { x: 300, y: 346, name: 'Modelo de\nEntretenimiento Progresivo' },
-  { x: 490, y: 34, name: 'Arquitectura de\nExperiencias Apostables' },
+// Labels at the 3 natural sections of the path (each ~1/3)
+// Sec 0: top of right loop (0–333), Sec 1: full left loop (333–666), Sec 2: bottom right arc (666–1000)
+const LABEL_POS = [
+  { x: 455, y: 36, align: 'middle' as const },  // top of right loop
+  { x: 145, y: 36, align: 'middle' as const },  // top of left loop
+  { x: 300, y: 320, align: 'middle' as const }, // below crossing
+];
+
+const SEGS = [
+  { offset: '0',    delay: '0s' },
+  { offset: '-334', delay: '-3s' },
+  { offset: '-667', delay: '-6s' },
 ];
 
 export default function Framework() {
-  const baseRef  = useRef<SVGPathElement>(null);
-  const seg0Ref  = useRef<SVGPathElement>(null);
-  const glow0Ref = useRef<SVGPathElement>(null);
-  const seg1Ref  = useRef<SVGPathElement>(null);
-  const glow1Ref = useRef<SVGPathElement>(null);
-  const seg2Ref  = useRef<SVGPathElement>(null);
-  const glow2Ref = useRef<SVGPathElement>(null);
-  const trvRef   = useRef<SVGPathElement>(null);
-
-  useEffect(() => {
-    const base = baseRef.current;
-    if (!base) return;
-    const len = base.getTotalLength();
-    const third = len / 3;
-    const CYCLE = '9s';
-
-    const segs = [
-      [seg0Ref, glow0Ref, 0],
-      [seg1Ref, glow1Ref, 1],
-      [seg2Ref, glow2Ref, 2],
-    ] as const;
-
-    segs.forEach(([sRef, gRef, i]) => {
-      const offset = `${-(third * i)}`;
-      const da = `${third} ${len - third}`;
-      for (const r of [sRef, gRef]) {
-        if (!r.current) continue;
-        r.current.style.strokeDasharray = da;
-        r.current.style.strokeDashoffset = offset;
-        r.current.style.animationDuration = CYCLE;
-        r.current.style.animationDelay = `${-3 * i}s`;
-      }
-    });
-
-    if (trvRef.current) {
-      const seg = len * 0.055;
-      trvRef.current.style.strokeDasharray = `${seg} ${len - seg}`;
-      trvRef.current.style.animationDuration = CYCLE;
-    }
-  }, []);
-
   return (
     <section id="framework" className="section framework">
       <div className="section-head">
@@ -64,48 +42,63 @@ export default function Framework() {
         </h2>
       </div>
 
-      <div className="fw-infinity reveal delay-2">
-        <svg viewBox="0 0 600 370" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <div className="fw-wrap reveal delay-2">
+        <svg viewBox="0 0 600 340" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" className="fw-svg">
           <defs>
-            <filter id="fw-glow" x="-40%" y="-40%" width="180%" height="180%">
-              <feGaussianBlur in="SourceGraphic" stdDeviation="9" result="b" />
-              <feMerge><feMergeNode in="b" /><feMergeNode in="SourceGraphic" /></feMerge>
+            <filter id="fw-blur-xl" x="-50%" y="-50%" width="200%" height="200%">
+              <feGaussianBlur stdDeviation="18" />
             </filter>
-            <filter id="fw-glow-sm" x="-20%" y="-20%" width="140%" height="140%">
-              <feGaussianBlur in="SourceGraphic" stdDeviation="4" result="b" />
-              <feMerge><feMergeNode in="b" /><feMergeNode in="SourceGraphic" /></feMerge>
+            <filter id="fw-blur-md" x="-30%" y="-30%" width="160%" height="160%">
+              <feGaussianBlur stdDeviation="8" />
+            </filter>
+            <filter id="fw-blur-sm" x="-20%" y="-20%" width="140%" height="140%">
+              <feGaussianBlur stdDeviation="3.5" />
             </filter>
           </defs>
 
-          {/* dim base */}
-          <path ref={baseRef} d={D} stroke="rgba(230,253,49,0.1)" strokeWidth="4" strokeLinecap="round" />
+          {/* ── dim base ── */}
+          <path d={D} pathLength="1000" stroke="rgba(230,253,49,0.09)" strokeWidth="3" strokeLinecap="round" />
 
-          {/* segment 0 — SAN */}
-          <path ref={glow0Ref} d={D} stroke="#e6fd31" strokeWidth="14" strokeLinecap="round" filter="url(#fw-glow)" className="fw-seg" />
-          <path ref={seg0Ref}  d={D} stroke="#e6fd31" strokeWidth="4"  strokeLinecap="round" className="fw-seg" />
+          {/* ── section segments (3 × third of path) ── */}
+          {SEGS.map((s, i) => (
+            <g key={i} className="fw-seg-group" style={{ animationDelay: s.delay }}>
+              {/* wide glow */}
+              <path d={D} pathLength="1000"
+                stroke="#e6fd31" strokeWidth="22" strokeLinecap="round"
+                strokeDasharray="333 667" strokeDashoffset={s.offset}
+                filter="url(#fw-blur-xl)" className="fw-seg-glow" style={{ animationDelay: s.delay }} />
+              {/* sharp stroke */}
+              <path d={D} pathLength="1000"
+                stroke="#e6fd31" strokeWidth="4" strokeLinecap="round"
+                strokeDasharray="333 667" strokeDashoffset={s.offset}
+                className="fw-seg-line" style={{ animationDelay: s.delay }} />
+            </g>
+          ))}
 
-          {/* segment 1 — MEP */}
-          <path ref={glow1Ref} d={D} stroke="#e6fd31" strokeWidth="14" strokeLinecap="round" filter="url(#fw-glow)" className="fw-seg" style={{ animationDelay: '-3s' }} />
-          <path ref={seg1Ref}  d={D} stroke="#e6fd31" strokeWidth="4"  strokeLinecap="round" className="fw-seg" style={{ animationDelay: '-3s' }} />
+          {/* ── traveling comet ── */}
+          {/* outer trail — ultra-soft halo */}
+          <path d={D} pathLength="1000"
+            stroke="#e6fd31" strokeWidth="28" strokeLinecap="round"
+            strokeDasharray="110 890"
+            filter="url(#fw-blur-xl)" className="fw-comet-trail" opacity="0.35" />
+          {/* mid glow */}
+          <path d={D} pathLength="1000"
+            stroke="#e6fd31" strokeWidth="14" strokeLinecap="round"
+            strokeDasharray="70 930"
+            filter="url(#fw-blur-md)" className="fw-comet-trail" opacity="0.6" />
+          {/* core bright dot */}
+          <path d={D} pathLength="1000"
+            stroke="white" strokeWidth="3.5" strokeLinecap="round"
+            strokeDasharray="38 962"
+            filter="url(#fw-blur-sm)" className="fw-comet-trail" opacity="0.95" />
 
-          {/* segment 2 — AEA */}
-          <path ref={glow2Ref} d={D} stroke="#e6fd31" strokeWidth="14" strokeLinecap="round" filter="url(#fw-glow)" className="fw-seg" style={{ animationDelay: '-6s' }} />
-          <path ref={seg2Ref}  d={D} stroke="#e6fd31" strokeWidth="4"  strokeLinecap="round" className="fw-seg" style={{ animationDelay: '-6s' }} />
-
-          {/* traveling light */}
-          <path ref={trvRef} d={D} stroke="rgba(255,255,255,0.9)" strokeWidth="3" strokeLinecap="round" filter="url(#fw-glow-sm)" className="fw-travel" />
-
-          {/* labels */}
+          {/* ── labels ── */}
           {FRAMEWORK_ITEMS.map((it, i) => {
-            const lb = LABELS[i];
-            const lines = lb.name.split('\n');
-            const isBottom = i === 1;
+            const p = LABEL_POS[i];
             return (
-              <g key={it.acr} className="fw-label" style={{ animationDelay: `${-3 * i}s`, animationDuration: '9s' }}>
-                <text x={lb.x} y={isBottom ? lb.y + 6 : lb.y - 22} textAnchor="middle" className="fw-acr">{it.acr}</text>
-                {lines.map((l, li) => (
-                  <text key={li} x={lb.x} y={isBottom ? lb.y + 22 + li * 15 : lb.y - 6 + li * 15} textAnchor="middle" className="fw-name">{l}</text>
-                ))}
+              <g key={it.acr} className="fw-label" style={{ animationDelay: SEGS[i].delay }}>
+                <text x={p.x} y={p.y} textAnchor={p.align} className="fw-acr">{it.acr}</text>
+                <text x={p.x} y={p.y + 16} textAnchor={p.align} className="fw-name">{it.name}</text>
               </g>
             );
           })}
