@@ -8,6 +8,30 @@ const GREETINGS: Msg[] = [
   { role: 'assistant', content: 'Grrrr... 👋 Soy GRIZZ. El oso que sabe cómo romper el mercado del entretenimiento y las apuestas en LATAM. ¿Qué tienes en mente?' },
 ];
 
+const RESPONSES = [
+  'Grr. Eso que me dices lo escucho todo el día de marcas que siguen poniendo banners en 2025. El problema no es el presupuesto, es que siguen pensando en interrumpir y no en entretener. Hay que cambiar el chip.',
+  'Escúchame bien: el usuario de apuestas no es fiel a la plataforma, es fiel a la emoción. Si tu marca no genera esa emoción antes del partido... ya perdiste. Grrr.',
+  'Mira, este oso ha visto mil "estrategias de contenido" que son básicamente un calendario de posts con el logo. Eso no es estrategia, eso es decoración. Necesitas narrativa, personajes, arcos. Como Netflix pero para apuestas.',
+  '¿Sabes por qué Bet365 sigue ganando en LATAM? No es por las cuotas. Es porque la gente los conoce. El awareness lo construye el entretenimiento, no el descuento del 20% en el primer depósito.',
+  'Grrrr. Me alegra que lo preguntes. El mercado colombiano está subvalorado. Hay una audiencia que ya está en TikTok viendo contenido de fútbol 4 horas al día y ninguna casa de apuestas les está hablando en su idioma. Ahí está el dinero.',
+  'Lo que me describes suena a que están intentando hacer marketing de performance disfrazado de contenido. Y eso se nota. La audiencia huele el oportunismo a kilómetros. Hay que ser genuino o no hacer nada.',
+  'Grr, dato que pocos saben: el contenido de entretenimiento tiene un ROI 3x mayor que el paid media en retención de usuarios de gaming. No lo digo yo, lo dicen los números. Y los números no mienten, solo las marcas aburridas.',
+  '¿Influencers? Grrr. Depende. Un nano-influencer que genuinamente ama el fútbol y las apuestas vale más que un macro que publica todo lo que le pagan. La autenticidad en este mercado es escasa y carísima.',
+  'Brasil, México, Colombia, Perú... cada mercado es un animal diferente. El que llega con una estrategia copy-paste de España se estrella. Hay que entender la cultura local, los equipos, los rituales del partido. Eso es lo que hacemos nosotros.',
+  'Grrrr. Me encanta esa pregunta. El futuro del betting no es la cuota mejorada, es la experiencia. Imagínate una transmisión donde el contenido y la apuesta son lo mismo. Eso es lo que viene y pocas marcas están listos para eso.',
+  'Este oso tiene una regla: si tu contenido puede existir sin tu marca, está mal hecho. El contenido tiene que ser tan tuyo que sin el logo igual se sabe que es tuyo. Eso es construcción de marca de verdad.',
+  'Grr. El problema de los operadores chicos no es el presupuesto, es la cobardía creativa. Tienen miedo de hacer algo que no haya hecho la competencia. Pero precisamente ahí está la oportunidad — hacer lo que los grandes no se atreven.',
+  '¿Temporada de fútbol? Para nosotros es temporada alta todo el año. Champions, eliminatorias, ligas locales, básquet, eSports... el calendario siempre está lleno. El que solo activa en el Mundial está perdiendo el 80% del año.',
+  'Grrrr, sí. La retención es el nuevo adquisición. Todos gastan millones trayendo usuarios y luego los abandonan con un email genérico. Si invirtieras el 30% de tu presupuesto de adquisición en contenido de retención, los números cambiarían completamente.',
+  '¿Quieres saber el secreto? No hay secreto. Es trabajar, entender a la audiencia, crear contenido que valga la pena ver y repetir hasta que la marca sea parte de la cultura. Simple de decir, difícil de ejecutar. Para eso estamos nosotros. Grrr.',
+  'Mira, este oso no vende humo. Si tu producto es malo, el contenido no lo salva. Pero si tu producto es bueno y nadie lo conoce, el contenido es la diferencia entre existir y dominar. ¿En cuál de los dos estás?',
+  'Grr. TikTok cambió todo en LATAM. El usuario promedio de apuestas en Colombia tiene 24 años y consume más TikTok que TV. ¿Tu marca está ahí con contenido nativo o todavía están haciendo comerciales de 30 segundos?',
+];
+
+function getBearReply(): string {
+  return RESPONSES[Math.floor(Math.random() * RESPONSES.length)];
+}
+
 export default function BearMascot() {
   const railRef = useRef<HTMLDivElement>(null);
   const bottomRef = useRef<HTMLDivElement>(null);
@@ -63,19 +87,10 @@ export default function BearMascot() {
     setMessages(next);
     setInput('');
     setLoading(true);
-    try {
-      const res = await fetch('/.netlify/functions/bear-chat', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ messages: next }),
-      });
-      const data = await res.json();
-      setMessages((m) => [...m, { role: 'assistant', content: data.reply || data.error }]);
-    } catch {
-      setMessages((m) => [...m, { role: 'assistant', content: 'Grr... algo falló. Intenta de nuevo.' }]);
-    } finally {
+    setTimeout(() => {
+      setMessages((m) => [...m, { role: 'assistant', content: getBearReply() }]);
       setLoading(false);
-    }
+    }, 900 + Math.random() * 700);
   }, [input, loading, messages]);
 
   const onKey = (e: React.KeyboardEvent) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); send(); } };
