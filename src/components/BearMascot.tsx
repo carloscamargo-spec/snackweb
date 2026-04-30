@@ -2,7 +2,8 @@ import { useRef, useState, useEffect, useCallback } from 'react';
 
 const BUBBLE_MSGS = ['HEY hablemos', 'Dale click aquí', 'Vamos por todo.!!!'];
 
-type Msg = { role: 'user' | 'assistant'; content: string };
+type Cta = { label: string; href: string };
+type Msg = { role: 'user' | 'assistant'; content: string; cta?: Cta[] };
 
 const GREETINGS: Msg[] = [
   { role: 'assistant', content: 'Grrrr... 👋 Soy GRIZZ. El oso que sabe cómo romper el mercado del entretenimiento y las apuestas en LATAM. ¿Qué tienes en mente?' },
@@ -28,14 +29,31 @@ const RESPONSES = [
   'Grr. TikTok cambió todo en LATAM. El usuario promedio de apuestas en Colombia tiene 24 años y consume más TikTok que TV. ¿Tu marca está ahí con contenido nativo o todavía están haciendo comerciales de 30 segundos?',
 ];
 
-const CONTACT_KEYWORDS = ['contacto', 'contactar', 'correo', 'email', 'mail', 'teléfono', 'telefono', 'whatsapp', 'whats', 'llamar', 'escribir', 'hablar', 'número', 'numero', 'cel', 'celular', 'comunicar', 'reunión', 'reunion', 'cita'];
+const CONTACT_KEYWORDS = ['contacto', 'contactar', 'correo', 'email', 'mail', 'teléfono', 'telefono', 'whatsapp', 'whats', 'llamar', 'escribir', 'hablar', 'número', 'numero', 'cel', 'celular', 'comunicar'];
+
+const MEETING_KEYWORDS = ['especialista', 'profesional', 'experto', 'equipo', 'precio', 'precios', 'costo', 'costos', 'cotizar', 'cotización', 'cotizacion', 'presupuesto', 'cuanto cuesta', 'cuánto cuesta', 'cuanto vale', 'cuánto vale', 'servicios', 'contratar', 'reunión', 'reunion', 'agendar', 'agenda', 'cita', 'llamada', 'hablar con alguien', 'quiero hablar'];
 
 const CONTACT_REPLY = `Grr, claro que sí. Así nos encuentras:\n\n📧 carlos.camargo@snackandsoda.co\n📧 andres.rodriguez@snackandsoda.co\n\n📱 WhatsApp Colombia: +57 321 491 9005\n\nEscríbenos, respondemos en menos de 48h. O si prefieres, llena el formulario de contacto aquí en la página. Este oso no deja mensajes sin responder. Grrr.`;
 
-function getBearReply(userText: string): string {
+const MEETING_REPLY: Omit<Msg, 'role'> = {
+  content: `Grrrr, ahora hablamos en serio. 🐻 Los humanos detrás de este oso son Carlos y Andrés — llevan años rompiendo el mercado del betting en LATAM y no van a venderte humo.\n\nAgenda una reunión directo con ellos. Sin filtros, sin asistentes, sin formularios eternos. Solo 30 minutos que pueden cambiar tu estrategia.`,
+  cta: [
+    {
+      label: '📅 Reunión con Carlos',
+      href: 'https://calendar.google.com/calendar/render?action=TEMPLATE&text=Reuni%C3%B3n+con+Snack+%26+Soda&add=carlos.camargo%40snackandsoda.co&details=Estrategia+de+contenido+para+betting+y+entretenimiento+LATAM&duration=3000',
+    },
+    {
+      label: '📅 Reunión con Andrés',
+      href: 'https://calendar.google.com/calendar/render?action=TEMPLATE&text=Reuni%C3%B3n+con+Snack+%26+Soda&add=andres.rodriguez%40snackandsoda.co&details=Estrategia+de+contenido+para+betting+y+entretenimiento+LATAM&duration=3000',
+    },
+  ],
+};
+
+function getBearReply(userText: string): Omit<Msg, 'role'> {
   const lower = userText.toLowerCase();
-  if (CONTACT_KEYWORDS.some((k) => lower.includes(k))) return CONTACT_REPLY;
-  return RESPONSES[Math.floor(Math.random() * RESPONSES.length)];
+  if (MEETING_KEYWORDS.some((k) => lower.includes(k))) return MEETING_REPLY;
+  if (CONTACT_KEYWORDS.some((k) => lower.includes(k))) return { content: CONTACT_REPLY };
+  return { content: RESPONSES[Math.floor(Math.random() * RESPONSES.length)] };
 }
 
 export default function BearMascot() {
@@ -94,7 +112,8 @@ export default function BearMascot() {
     setInput('');
     setLoading(true);
     setTimeout(() => {
-      setMessages((m) => [...m, { role: 'assistant', content: getBearReply(text) }]);
+      const reply = getBearReply(text);
+      setMessages((m) => [...m, { role: 'assistant', ...reply }]);
       setLoading(false);
     }, 900 + Math.random() * 700);
   }, [input, loading, messages]);
@@ -138,7 +157,18 @@ export default function BearMascot() {
               {messages.map((m, i) => (
                 <div key={i} className={`bear-msg bear-msg--${m.role}`}>
                   {m.role === 'assistant' && <img src="/bear-mascot.jpeg" alt="" className="bear-msg-avatar" />}
-                  <div className="bear-msg-bubble">{m.content}</div>
+                  <div className="bear-msg-bubble">
+                    {m.content}
+                    {m.cta && (
+                      <div className="bear-msg-cta">
+                        {m.cta.map((btn) => (
+                          <a key={btn.href} href={btn.href} target="_blank" rel="noopener" className="bear-cta-btn">
+                            {btn.label}
+                          </a>
+                        ))}
+                      </div>
+                    )}
+                  </div>
                 </div>
               ))}
               {loading && (

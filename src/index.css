@@ -488,6 +488,10 @@ a { color: inherit; text-decoration: none; }
 .bear-msg-typing span:nth-child(3) { animation-delay: 0.4s; }
 @keyframes bearTyping { 0%, 100% { opacity: 0.3; transform: translateY(0); } 50% { opacity: 1; transform: translateY(-3px); } }
 
+.bear-msg-cta { display: flex; flex-direction: column; gap: 8px; margin-top: 12px; }
+.bear-cta-btn { display: block; background: var(--brand); color: var(--black); font-size: 13px; font-weight: 700; text-align: center; text-decoration: none; padding: 10px 14px; border-radius: 10px; transition: background 0.15s, transform 0.1s; }
+.bear-cta-btn:hover { background: #f0ff45; transform: translateY(-1px); }
+
 .bear-modal-ft { display: flex; gap: 8px; padding: 12px 14px; border-top: 1px solid rgba(255,255,255,0.08); flex-shrink: 0; }
 .bear-modal-input { flex: 1; background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; color: var(--white); font-size: 14px; padding: 10px 14px; outline: none; font-family: inherit; }
 .bear-modal-input::placeholder { color: rgba(255,255,255,0.3); }
