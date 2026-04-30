@@ -289,16 +289,21 @@ a { color: inherit; text-decoration: none; }
 .solution .sol-title.reveal.in { transform: translateY(0) scale(1); }
 
 .framework { background: var(--black); position: relative; overflow: hidden; }
-.framework-grid { display: grid; grid-template-columns: repeat(12, minmax(0,1fr)); column-gap: var(--grid-gutter); padding: 0 var(--page-pad); }
-.framework-card { grid-column: span 12; position: relative; display: grid; grid-template-columns: auto 1fr auto; gap: clamp(20px, 3vw, 48px); align-items: start; padding: 36px 0; border-top: 1px solid var(--neutral-700); transition: padding 320ms ease; }
-.framework-card:last-child { border-bottom: 1px solid var(--neutral-700); }
-.framework-card:hover { padding-left: 12px; }
-.framework-card .acronym { font-size: clamp(2.5rem, 6vw, 6rem); font-weight: 900; letter-spacing: -0.04em; line-height: 0.9; color: var(--white); min-width: 4ch; }
-.framework-card:hover .acronym { color: var(--brand); }
-.framework-card .body { display: flex; flex-direction: column; gap: 14px; }
-.framework-card .name { font-size: clamp(1.05rem, 1.4vw, 1.35rem); font-weight: 600; letter-spacing: -0.015em; text-transform: lowercase; color: var(--white); }
-.framework-card .desc { font-size: clamp(0.95rem, 1.05vw, 1.05rem); color: var(--neutral-300); max-width: 60ch; line-height: 1.5; }
-.framework-card .num { font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.22em; color: var(--neutral-500); padding-top: 12px; }
+
+.fw-infinity { padding: 0 var(--page-pad); display: flex; justify-content: center; margin: clamp(16px, 4vh, 40px) 0; }
+.fw-infinity svg { width: clamp(220px, 50vw, 480px); height: auto; }
+@keyframes fw-travel { to { stroke-dashoffset: -9999; } }
+
+.framework-grid { display: grid; grid-template-columns: repeat(3, 1fr); column-gap: var(--grid-gutter); padding: 0 var(--page-pad); }
+.framework-card { position: relative; display: flex; flex-direction: column; gap: 20px; padding: 36px 0; border-top: 1px solid var(--neutral-700); transition: padding 320ms ease; }
+.framework-card:hover { padding-left: 10px; }
+.fw-card-num { font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.22em; color: var(--neutral-500); text-transform: uppercase; }
+.framework-card .acronym { font-size: clamp(2rem, 4.5vw, 5rem); font-weight: 900; letter-spacing: -0.04em; line-height: 0.9; color: var(--white); }
+.framework-card:hover .acronym { color: var(--brand); transition: color 220ms ease; }
+.framework-card .body { display: flex; flex-direction: column; gap: 10px; }
+.framework-card .name { font-size: clamp(0.9rem, 1.1vw, 1.1rem); font-weight: 600; letter-spacing: -0.01em; text-transform: lowercase; color: var(--white); }
+.framework-card .desc { font-size: clamp(0.85rem, 0.95vw, 0.95rem); color: var(--neutral-300); line-height: 1.55; }
+@media (max-width: 780px) { .framework-grid { grid-template-columns: 1fr; } }
 
 .cases { background: var(--neutral-950); position: relative; overflow: hidden; }
 .cases-track-wrap { position: relative; padding: 0 var(--page-pad); }
