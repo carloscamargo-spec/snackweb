@@ -439,7 +439,7 @@ a { color: inherit; text-decoration: none; }
   .problem-num { grid-column: 1 / -1; padding-bottom: 0; }
   .problem-num::before { width: 24px; }
   .problem-headline, .problem-body { grid-column: 1 / -1; }
-  .problem-content { display: flex; flex-direction: column; justify-content: space-between; padding-top: clamp(24px,5vh,40px); padding-bottom: clamp(32px,6vh,56px); }
+  .problem-content { display: flex; flex-direction: column; justify-content: flex-start; gap: clamp(24px, 6vh, 48px); padding-top: clamp(24px,5vh,40px); padding-bottom: clamp(32px,6vh,56px); }
   .problem-tag { align-self: auto; }
   .solution-foot .quote, .solution-foot .meta { grid-column: 1 / -1; }
   .solution-foot .meta { justify-content: flex-start; margin-top: 12px; }
@@ -462,9 +462,15 @@ a { color: inherit; text-decoration: none; }
 @media (max-width: 720px) { .bear-chat { right: 12px; } .bear-chat-bubble { display: none; } .bear-chat-avatar { width: 44px; height: 44px; } }
 
 /* ── Bear chat modal ── */
-.bear-modal-overlay { position: fixed; inset: 0; z-index: 9999; background: rgba(0,0,0,0.45); backdrop-filter: blur(4px); display: flex; align-items: flex-end; justify-content: flex-end; padding: 20px; }
+.bear-modal-overlay { position: fixed; inset: 0; z-index: 9999; background: rgba(0,0,0,0.55); backdrop-filter: blur(4px); display: flex; align-items: flex-end; justify-content: flex-end; padding: 20px; touch-action: none; }
 .bear-modal { width: 380px; max-width: calc(100vw - 24px); height: 560px; max-height: calc(100svh - 40px); background: #111; border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 32px 80px rgba(0,0,0,0.6); animation: bearModalIn 280ms cubic-bezier(.2,.8,.2,1); }
 @keyframes bearModalIn { from { opacity: 0; transform: translateY(24px) scale(0.96); } to { opacity: 1; transform: none; } }
+@media (max-width: 640px) {
+  .bear-modal-overlay { padding: 0; align-items: flex-end; justify-content: stretch; }
+  .bear-modal { width: 100%; max-width: 100%; height: 82svh; max-height: 82svh; border-radius: 20px 20px 0 0; animation: bearModalInMobile 300ms cubic-bezier(.2,.8,.2,1); }
+  .bear-modal-input { font-size: 16px; }
+  @keyframes bearModalInMobile { from { opacity: 0; transform: translateY(100%); } to { opacity: 1; transform: none; } }
+}
 
 .bear-modal-hd { display: flex; align-items: center; justify-content: space-between; padding: 16px 16px 14px; border-bottom: 1px solid rgba(255,255,255,0.08); flex-shrink: 0; }
 .bear-modal-id { display: flex; align-items: center; gap: 12px; }

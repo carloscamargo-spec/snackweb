@@ -9,6 +9,7 @@ export default function Hero() {
         fallbackBg="#0a0a0a"
         posterGradient="radial-gradient(70% 90% at 70% 60%, rgba(230,253,49,0.06) 0%, rgba(0,0,0,0) 60%), linear-gradient(180deg, #0a0a0a 0%, #000 100%)"
         fallbackLabel="bear-hero.mp4 · cinematic loop"
+        loopFade
       />
       <div className="hero-vignette" />
       <div className="hero-grid-overlay" />

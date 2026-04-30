@@ -144,6 +144,29 @@ export default function BearMascot() {
     if (open) setTimeout(() => inputRef.current?.focus(), 120);
   }, [open]);
 
+  // lock body scroll while chat is open (prevents background scroll on mobile)
+  useEffect(() => {
+    if (open) {
+      const y = window.scrollY;
+      document.body.style.position = 'fixed';
+      document.body.style.top = `-${y}px`;
+      document.body.style.width = '100%';
+    } else {
+      const top = document.body.style.top;
+      document.body.style.position = '';
+      document.body.style.top = '';
+      document.body.style.width = '';
+      if (top) window.scrollTo(0, -parseInt(top));
+    }
+    return () => {
+      const top = document.body.style.top;
+      document.body.style.position = '';
+      document.body.style.top = '';
+      document.body.style.width = '';
+      if (top) window.scrollTo(0, -parseInt(top));
+    };
+  }, [open]);
+
   const send = useCallback(async () => {
     const text = input.trim();
     if (!text || loading) return;
