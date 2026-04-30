@@ -1,6 +1,20 @@
+import { useState, useEffect } from 'react';
 import MediaWithFallback from './MediaWithFallback';
 
+function useLiveCount(base: number, interval = 2400) {
+  const [count, setCount] = useState(base);
+  useEffect(() => {
+    const id = setInterval(() => {
+      setCount((n) => n + Math.floor(Math.random() * 14) - 6);
+    }, interval);
+    return () => clearInterval(id);
+  }, [interval]);
+  return count.toLocaleString('es-CO');
+}
+
 export default function Problem() {
+  const count = useLiveCount(148_432);
+
   return (
     <section id="problema" className="problem">
       <MediaWithFallback
@@ -14,6 +28,7 @@ export default function Problem() {
         <div className="problem-tag reveal">
           <span className="dot" />
           En vivo desde la rotación de usuarios
+          <span className="problem-count">{count}</span>
         </div>
         <div className="problem-bottom">
           <div className="problem-num reveal">01 — El Problema</div>

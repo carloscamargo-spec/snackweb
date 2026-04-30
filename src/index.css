@@ -210,6 +210,15 @@ a { color: inherit; text-decoration: none; }
   color: rgba(0,0,0,0.85); background: var(--brand); padding: 8px 14px;
   border-radius: 999px; width: fit-content; border: 1px solid rgba(0,0,0,0.15);
 }
+.problem-count {
+  font-family: 'JetBrains Mono', monospace;
+  font-variant-numeric: tabular-nums;
+  background: rgba(0,0,0,0.12);
+  padding: 2px 8px;
+  border-radius: 999px;
+  letter-spacing: 0.04em;
+  font-size: 10px;
+}
 .problem-tag .dot {
   width: 6px; height: 6px; border-radius: 999px; background: var(--black);
   animation: pulse 1.6s ease-in-out infinite;
@@ -430,6 +439,8 @@ a { color: inherit; text-decoration: none; }
   .problem-num { grid-column: 1 / -1; padding-bottom: 0; }
   .problem-num::before { width: 24px; }
   .problem-headline, .problem-body { grid-column: 1 / -1; }
+  .problem-content { display: flex; flex-direction: column; justify-content: space-between; padding-top: clamp(24px,5vh,40px); padding-bottom: clamp(32px,6vh,56px); }
+  .problem-tag { align-self: auto; }
   .solution-foot .quote, .solution-foot .meta { grid-column: 1 / -1; }
   .solution-foot .meta { justify-content: flex-start; margin-top: 12px; }
 }
