@@ -290,20 +290,32 @@ a { color: inherit; text-decoration: none; }
 
 .framework { background: var(--black); position: relative; overflow: hidden; }
 
-.fw-infinity { padding: 0 var(--page-pad); display: flex; justify-content: center; margin: clamp(16px, 4vh, 40px) 0; }
-.fw-infinity svg { width: clamp(220px, 50vw, 480px); height: auto; }
-@keyframes fw-travel { to { stroke-dashoffset: -9999; } }
+.fw-infinity { padding: 0 var(--page-pad); display: flex; justify-content: center; margin: clamp(24px, 5vh, 56px) 0 0; }
+.fw-infinity svg { width: clamp(280px, 72vw, 680px); height: auto; overflow: visible; }
 
-.framework-grid { display: grid; grid-template-columns: repeat(3, 1fr); column-gap: var(--grid-gutter); padding: 0 var(--page-pad); }
-.framework-card { position: relative; display: flex; flex-direction: column; gap: 20px; padding: 36px 0; border-top: 1px solid var(--neutral-700); transition: padding 320ms ease; }
-.framework-card:hover { padding-left: 10px; }
-.fw-card-num { font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.22em; color: var(--neutral-500); text-transform: uppercase; }
-.framework-card .acronym { font-size: clamp(2rem, 4.5vw, 5rem); font-weight: 900; letter-spacing: -0.04em; line-height: 0.9; color: var(--white); }
-.framework-card:hover .acronym { color: var(--brand); transition: color 220ms ease; }
-.framework-card .body { display: flex; flex-direction: column; gap: 10px; }
-.framework-card .name { font-size: clamp(0.9rem, 1.1vw, 1.1rem); font-weight: 600; letter-spacing: -0.01em; text-transform: lowercase; color: var(--white); }
-.framework-card .desc { font-size: clamp(0.85rem, 0.95vw, 0.95rem); color: var(--neutral-300); line-height: 1.55; }
-@media (max-width: 780px) { .framework-grid { grid-template-columns: 1fr; } }
+/* segments: bright at start, dim for rest of 9s cycle */
+@keyframes fw-seg-pulse {
+  0%   { opacity: 1; }
+  28%  { opacity: 1; }
+  42%  { opacity: 0.1; }
+  100% { opacity: 0.1; }
+}
+.fw-seg { opacity: 0.1; animation: fw-seg-pulse linear infinite; }
+
+/* traveling light */
+@keyframes fw-travel { to { stroke-dashoffset: -9999; } }
+.fw-travel { animation: fw-travel linear infinite; }
+
+/* labels sync with their segment */
+@keyframes fw-label-pulse {
+  0%   { opacity: 1; }
+  28%  { opacity: 1; }
+  42%  { opacity: 0.3; }
+  100% { opacity: 0.3; }
+}
+.fw-label { opacity: 0.3; animation: fw-label-pulse linear infinite; }
+.fw-acr  { font-family: 'Inter', sans-serif; font-size: 18px; font-weight: 900; letter-spacing: -0.03em; fill: #e6fd31; text-transform: uppercase; }
+.fw-name { font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: 0.12em; fill: rgba(230,253,49,0.6); text-transform: uppercase; }
 
 .cases { background: var(--neutral-950); position: relative; overflow: hidden; }
 .cases-track-wrap { position: relative; padding: 0 var(--page-pad); }
