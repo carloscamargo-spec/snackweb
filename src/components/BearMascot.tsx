@@ -28,7 +28,13 @@ const RESPONSES = [
   'Grr. TikTok cambió todo en LATAM. El usuario promedio de apuestas en Colombia tiene 24 años y consume más TikTok que TV. ¿Tu marca está ahí con contenido nativo o todavía están haciendo comerciales de 30 segundos?',
 ];
 
-function getBearReply(): string {
+const CONTACT_KEYWORDS = ['contacto', 'contactar', 'correo', 'email', 'mail', 'teléfono', 'telefono', 'whatsapp', 'whats', 'llamar', 'escribir', 'hablar', 'número', 'numero', 'cel', 'celular', 'comunicar', 'reunión', 'reunion', 'cita'];
+
+const CONTACT_REPLY = `Grr, claro que sí. Así nos encuentras:\n\n📧 carlos.camargo@snackandsoda.co\n📧 andres.rodriguez@snackandsoda.co\n\n📱 WhatsApp Colombia: +57 321 491 9005\n\nEscríbenos, respondemos en menos de 48h. O si prefieres, llena el formulario de contacto aquí en la página. Este oso no deja mensajes sin responder. Grrr.`;
+
+function getBearReply(userText: string): string {
+  const lower = userText.toLowerCase();
+  if (CONTACT_KEYWORDS.some((k) => lower.includes(k))) return CONTACT_REPLY;
   return RESPONSES[Math.floor(Math.random() * RESPONSES.length)];
 }
 
@@ -88,7 +94,7 @@ export default function BearMascot() {
     setInput('');
     setLoading(true);
     setTimeout(() => {
-      setMessages((m) => [...m, { role: 'assistant', content: getBearReply() }]);
+      setMessages((m) => [...m, { role: 'assistant', content: getBearReply(text) }]);
       setLoading(false);
     }, 900 + Math.random() * 700);
   }, [input, loading, messages]);

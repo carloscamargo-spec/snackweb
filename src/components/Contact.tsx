@@ -41,6 +41,14 @@ export default function Contact() {
               <div className="val">snackandsoda.co</div>
             </div>
             <div>
+              <div className="key">WhatsApp</div>
+              <div className="val">
+                <a href="https://wa.me/573214919005" target="_blank" rel="noopener" style={{ color: 'inherit', textDecoration: 'underline' }}>
+                  +57 321 491 9005
+                </a>
+              </div>
+            </div>
+            <div>
               <div className="key">Tiempo de respuesta</div>
               <div className="val">≤ 48 horas</div>
             </div>
