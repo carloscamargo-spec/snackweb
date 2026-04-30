@@ -290,37 +290,32 @@ a { color: inherit; text-decoration: none; }
 
 .framework { background: var(--black); position: relative; overflow: hidden; }
 
-.fw-wrap { display: flex; justify-content: center; padding: clamp(16px, 4vh, 48px) var(--page-pad) clamp(32px, 6vh, 72px); }
-.fw-svg { width: clamp(300px, 76vw, 700px); height: auto; overflow: visible; }
-
-/* ── section segments: fade in smoothly, hold, fade out ── */
-@keyframes fw-seg-pulse {
-  0%   { opacity: 0.06; }
-  6%   { opacity: 0.85; }
-  30%  { opacity: 0.85; }
-  44%  { opacity: 0.06; }
-  100% { opacity: 0.06; }
+.framework-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  column-gap: var(--grid-gutter); padding: 0 var(--page-pad);
+  margin-top: clamp(48px, 8vh, 96px);
 }
-.fw-seg-glow, .fw-seg-line {
-  opacity: 0.06;
-  animation: fw-seg-pulse 9s ease-in-out infinite;
-}
+@media (max-width: 780px) { .framework-grid { grid-template-columns: 1fr; } }
 
-/* ── traveling comet ── */
-@keyframes fw-comet { to { stroke-dashoffset: -1000; } }
-.fw-comet-trail { animation: fw-comet 9s linear infinite; }
-
-/* ── labels: sync with segment ── */
-@keyframes fw-label-pulse {
-  0%   { opacity: 0.2; }
-  6%   { opacity: 1; }
-  30%  { opacity: 1; }
-  44%  { opacity: 0.2; }
-  100% { opacity: 0.2; }
+.framework-card {
+  padding: 32px 0 48px;
+  border-top: 1px solid var(--neutral-700);
+  display: flex; flex-direction: column; gap: 16px;
+  opacity: 0; transform: translateY(24px);
+  transition: opacity 650ms cubic-bezier(.2,.7,.2,1), transform 650ms cubic-bezier(.2,.7,.2,1), border-color 400ms ease;
 }
-.fw-label { opacity: 0.2; animation: fw-label-pulse 9s ease-in-out infinite; }
-.fw-acr  { font-family: 'Inter', sans-serif; font-size: 17px; font-weight: 900; letter-spacing: -0.02em; fill: #e6fd31; }
-.fw-name { font-family: 'JetBrains Mono', monospace; font-size: 8.5px; letter-spacing: 0.1em; fill: rgba(230,253,49,0.55); text-transform: uppercase; }
+.framework-card.lit { opacity: 1; transform: translateY(0); border-top-color: var(--brand); }
+
+.fw-num { font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--neutral-500); }
+.fw-acr {
+  font-size: clamp(2.8rem, 5.5vw, 5.5rem); font-weight: 900;
+  letter-spacing: -0.045em; line-height: 0.88;
+  color: rgba(255,255,255,0.15);
+  transition: color 500ms ease 200ms;
+}
+.framework-card.lit .fw-acr { color: var(--brand); }
+.fw-name { font-size: clamp(0.92rem, 1.1vw, 1.1rem); font-weight: 600; letter-spacing: -0.01em; text-transform: lowercase; color: var(--white); }
+.fw-desc { font-size: clamp(0.88rem, 0.95vw, 0.98rem); color: var(--neutral-300); line-height: 1.6; }
 
 .cases { background: var(--neutral-950); position: relative; overflow: hidden; }
 .cases-track-wrap { position: relative; padding: 0 var(--page-pad); }
