@@ -1,4 +1,25 @@
+import { useEffect, useRef } from 'react';
+
 export default function VideoEmbed() {
+  const iframeRef = useRef<HTMLIFrameElement>(null);
+
+  useEffect(() => {
+    const iframe = iframeRef.current;
+    if (!iframe) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (!entry.isIntersecting) {
+          iframe.contentWindow?.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*');
+        }
+      },
+      { threshold: 0.1 }
+    );
+
+    observer.observe(iframe);
+    return () => observer.disconnect();
+  }, []);
+
   return (
     <section id="manifiesto" className="section embed">
       <div className="section-head">
@@ -16,7 +37,8 @@ export default function VideoEmbed() {
       </div>
       <div className="embed-frame reveal" style={{ marginTop: 18 }}>
         <iframe
-          src="https://www.youtube.com/embed/Ncrsi9qwafE?rel=0"
+          ref={iframeRef}
+          src="https://www.youtube.com/embed/Ncrsi9qwafE?rel=0&enablejsapi=1"
           title="Snack & Soda Manifesto"
           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
           allowFullScreen
