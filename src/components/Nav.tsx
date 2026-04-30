@@ -39,7 +39,7 @@ export default function Nav() {
         <div className="nav-cta">
           <span className="nav-clock">{time} · COLOMBIA</span>
           <div className="nav-social" aria-label="Redes sociales">
-            <a href="https://instagram.com/" target="_blank" rel="noopener" className="nav-social-link" aria-label="Instagram">
+            <a href="https://www.instagram.com/snackandsoda/" target="_blank" rel="noopener" className="nav-social-link" aria-label="Instagram">
               <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
                 <rect x="3" y="3" width="18" height="18" rx="5" />
                 <circle cx="12" cy="12" r="4" />
@@ -51,7 +51,7 @@ export default function Nav() {
                 <path d="M16.5 3h-2.7v12.2a2.6 2.6 0 1 1-2.6-2.6c.27 0 .53.04.78.12v-2.78a5.4 5.4 0 1 0 4.62 5.34V8.43a6.7 6.7 0 0 0 4 1.32V7a4 4 0 0 1-4-4z" />
               </svg>
             </a>
-            <a href="https://youtube.com/" target="_blank" rel="noopener" className="nav-social-link" aria-label="YouTube">
+            <a href="https://www.youtube.com/@SnackAndSoda" target="_blank" rel="noopener" className="nav-social-link" aria-label="YouTube">
               <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
                 <path d="M21.6 7.2a2.5 2.5 0 0 0-1.76-1.77C18.27 5 12 5 12 5s-6.27 0-7.84.43A2.5 2.5 0 0 0 2.4 7.2 26 26 0 0 0 2 12a26 26 0 0 0 .4 4.8 2.5 2.5 0 0 0 1.76 1.77C5.73 19 12 19 12 19s6.27 0 7.84-.43a2.5 2.5 0 0 0 1.76-1.77A26 26 0 0 0 22 12a26 26 0 0 0-.4-4.8zM10 15V9l5.2 3-5.2 3z" />
               </svg>
