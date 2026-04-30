@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
 import { CASES } from '../data/cases';
 
 export default function Cases() {
@@ -6,9 +6,26 @@ export default function Cases() {
   const next = useCallback(() => setIdx((i) => (i + 1) % CASES.length), []);
   const prev = useCallback(() => setIdx((i) => (i - 1 + CASES.length) % CASES.length), []);
   const cur = CASES[idx];
+  const sectionRef = useRef<HTMLElement>(null);
+  const iframeRef = useRef<HTMLIFrameElement>(null);
+
+  useEffect(() => {
+    const section = sectionRef.current;
+    if (!section) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (!entry.isIntersecting) {
+          iframeRef.current?.contentWindow?.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*');
+        }
+      },
+      { threshold: 0.1 }
+    );
+    observer.observe(section);
+    return () => observer.disconnect();
+  }, []);
 
   return (
-    <section id="casos" className="section cases">
+    <section ref={sectionRef} id="casos" className="section cases">
       <div className="section-head">
         <div className="label reveal">
           <span className="num">06</span>
@@ -22,7 +39,8 @@ export default function Cases() {
       <div className="cases-track-wrap reveal">
         <div className="cases-stage" key={cur.id}>
           <iframe
-            src={`https://www.youtube.com/embed/${cur.id}?rel=0`}
+            ref={iframeRef}
+            src={`https://www.youtube.com/embed/${cur.id}?rel=0&enablejsapi=1`}
             title={cur.title}
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
             allowFullScreen
