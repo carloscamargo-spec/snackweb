@@ -57,31 +57,3 @@ export default function Framework() {
     </section>
   );
 }
-
-
-  return (
-    <section ref={sectionRef} id="framework" className="section framework">
-      <div className="section-head">
-        <div className="label reveal">
-          <span className="num">05</span>
-          <span>El framework</span>
-        </div>
-        <h2 className="title reveal delay-1">
-          tres sistemas.<br />
-          una sola <em>tesis.</em>
-        </h2>
-      </div>
-
-      <div className="framework-grid">
-        {FRAMEWORK_ITEMS.map((it, i) => (
-          <article ref={refs[i]} key={it.acr} className="framework-card">
-            <div className="fw-num">{it.num}</div>
-            <div className="fw-acr">{it.acr}</div>
-            <div className="fw-name">{it.name}</div>
-            <p className="fw-desc">{it.desc}</p>
-          </article>
-        ))}
-      </div>
-    </section>
-  );
-}
