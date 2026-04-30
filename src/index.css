@@ -283,6 +283,10 @@ a { color: inherit; text-decoration: none; }
 .sol-quote p { font-size: clamp(1.05rem, 1.6vw, 1.35rem); color: rgba(0,0,0,0.7); line-height: 1.45; }
 .sol-quote p strong { color: var(--black); font-weight: 800; }
 .sol-quote-meta { display: block; margin-top: 14px; font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; color: rgba(0,0,0,0.4); }
+.sol-delay-4 { transition-delay: 320ms; }
+.sol-delay-5 { transition-delay: 440ms; }
+.solution .sol-title.reveal { transform: translateY(40px) scale(0.97); }
+.solution .sol-title.reveal.in { transform: translateY(0) scale(1); }
 
 .framework { background: var(--black); position: relative; overflow: hidden; }
 .framework-grid { display: grid; grid-template-columns: repeat(12, minmax(0,1fr)); column-gap: var(--grid-gutter); padding: 0 var(--page-pad); }

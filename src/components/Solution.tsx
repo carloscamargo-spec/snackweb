@@ -16,22 +16,22 @@ export default function Solution() {
           y casi todos lo invierten.
         </p>
 
-        <div className="sol-steps reveal delay-3">
-          <div className="sol-step">
+        <div className="sol-steps">
+          <div className="sol-step reveal delay-2">
             <span className="sol-step-num">01</span>
             <span className="sol-step-label">primero <em>entretenimiento.</em></span>
           </div>
-          <div className="sol-step">
+          <div className="sol-step reveal delay-3">
             <span className="sol-step-num">02</span>
             <span className="sol-step-label">luego <em>marketing.</em></span>
           </div>
-          <div className="sol-step">
+          <div className="sol-step reveal sol-delay-4">
             <span className="sol-step-num">03</span>
             <span className="sol-step-label">al final, <em>conversión.</em></span>
           </div>
         </div>
 
-        <div className="sol-quote reveal delay-3">
+        <div className="sol-quote reveal sol-delay-5">
           <p>
             La marca no interrumpe la historia —{' '}
             <strong>es la historia.</strong>
