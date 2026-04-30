@@ -2,18 +2,26 @@ import { useEffect, useRef } from 'react';
 
 export default function VideoEmbed() {
   const iframeRef = useRef<HTMLIFrameElement>(null);
+  const hasPlayed = useRef(false);
 
   useEffect(() => {
     const iframe = iframeRef.current;
     if (!iframe) return;
 
+    const send = (func: string) =>
+      iframe.contentWindow?.postMessage(`{"event":"command","func":"${func}","args":""}`, '*');
+
     const observer = new IntersectionObserver(
       ([entry]) => {
-        if (!entry.isIntersecting) {
-          iframe.contentWindow?.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*');
+        if (entry.isIntersecting && !hasPlayed.current) {
+          hasPlayed.current = true;
+          setTimeout(() => send('playVideo'), 500);
+        } else if (!entry.isIntersecting) {
+          send('pauseVideo');
+          hasPlayed.current = false;
         }
       },
-      { threshold: 0.1 }
+      { threshold: 0.5 }
     );
 
     observer.observe(iframe);
@@ -38,7 +46,7 @@ export default function VideoEmbed() {
       <div className="embed-frame reveal" style={{ marginTop: 18 }}>
         <iframe
           ref={iframeRef}
-          src="https://www.youtube.com/embed/Ncrsi9qwafE?rel=0&enablejsapi=1"
+          src="https://www.youtube.com/embed/Ncrsi9qwafE?rel=0&enablejsapi=1&autoplay=0"
           title="Snack & Soda Manifesto"
           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
           allowFullScreen
