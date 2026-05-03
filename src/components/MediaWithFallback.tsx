@@ -11,7 +11,8 @@ interface Props {
 
 export default function MediaWithFallback({ src, className, fallbackBg, fallbackLabel, posterGradient, loopFade = false }: Props) {
   const [status, setStatus] = useState<'probing' | 'ok' | 'missing'>('probing');
-  const [loaded, setLoaded] = useState(false);
+  const [playing, setPlaying] = useState(false);
+  const [bufPct, setBufPct] = useState(0);
   const [fading, setFading] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
 
@@ -39,19 +40,7 @@ export default function MediaWithFallback({ src, className, fallbackBg, fallback
 
   if (status !== 'ok') {
     return (
-      <div
-        className={className}
-        style={{
-          background: fallbackBg,
-          backgroundImage: posterGradient,
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          display: 'flex',
-          alignItems: 'flex-end',
-          justifyContent: 'flex-end',
-          padding: 24,
-        }}
-      >
+      <div className={className} style={{ background: fallbackBg, backgroundImage: posterGradient, backgroundSize: 'cover', backgroundPosition: 'center', display: 'flex', alignItems: 'flex-end', justifyContent: 'flex-end', padding: 24 }}>
         <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 10, letterSpacing: '0.22em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.45)' }}>
           {fallbackLabel}
         </span>
@@ -69,26 +58,37 @@ export default function MediaWithFallback({ src, className, fallbackBg, fallback
         muted
         loop
         playsInline
-        onCanPlay={() => setLoaded(true)}
+        onPlaying={() => setPlaying(true)}
+        onProgress={() => {
+          const v = videoRef.current;
+          if (v?.duration && v.buffered.length)
+            setBufPct(Math.round((v.buffered.end(v.buffered.length - 1) / v.duration) * 100));
+        }}
       />
 
-      {/* subtle loader — fades out once video can play */}
+      {/* loader — covers native play button, disappears on first frame playing */}
       <div style={{
-        position: 'absolute', inset: 0, background: '#080808', pointerEvents: 'none',
-        opacity: loaded ? 0 : 1,
-        transition: 'opacity 1.1s ease',
-        zIndex: 2,
-        display: 'flex', flexDirection: 'column', alignItems: 'flex-end', justifyContent: 'flex-end',
-        padding: '0 0 20px 0',
+        position: 'absolute', inset: 0, zIndex: 2,
+        background: '#090909',
+        pointerEvents: 'none',
+        opacity: playing ? 0 : 1,
+        transition: playing ? 'opacity 1.2s ease' : 'none',
+        overflow: 'hidden',
       }}>
-        {/* scanning bar */}
-        <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: 2, background: 'rgba(255,255,255,0.04)', overflow: 'hidden' }}>
-          <div style={{ height: '100%', width: '45%', background: 'linear-gradient(90deg, transparent, #e6fd31, transparent)', animation: 'heroScan 1.6s ease-in-out infinite' }} />
+        {/* moving shimmer sweep */}
+        <div style={{
+          position: 'absolute', inset: 0,
+          background: 'linear-gradient(108deg, transparent 38%, rgba(255,255,255,0.022) 50%, transparent 62%)',
+          animation: 'heroShimmer 2.4s ease-in-out infinite',
+        }} />
+
+        {/* progress bar — determinate when buffering, scan when waiting */}
+        <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: 2, background: 'rgba(255,255,255,0.05)' }}>
+          {bufPct > 0
+            ? <div style={{ height: '100%', width: `${bufPct}%`, background: 'linear-gradient(90deg, rgba(230,253,49,0.35), #e6fd31)', transition: 'width 0.4s ease' }} />
+            : <div style={{ position: 'absolute', height: '100%', width: '40%', background: 'linear-gradient(90deg, transparent, rgba(230,253,49,0.55), transparent)', animation: 'heroScan 1.7s ease-in-out infinite' }} />
+          }
         </div>
-        {/* label */}
-        <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 9, letterSpacing: '0.28em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.18)', paddingRight: 20 }}>
-          cargando
-        </span>
       </div>
 
       {loopFade && (
