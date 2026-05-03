@@ -58,6 +58,9 @@ export default function MediaWithFallback({ src, className, fallbackBg, fallback
         muted
         loop
         playsInline
+        disablePictureInPicture
+        disableRemotePlayback
+        x-webkit-airplay="deny"
         onPlaying={() => setPlaying(true)}
         onProgress={() => {
           const v = videoRef.current;
