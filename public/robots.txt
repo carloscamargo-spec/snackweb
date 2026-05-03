@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+Disallow: /.netlify/
+Disallow: /netlify/
+
+# Sitemap
+Sitemap: https://snackandsoda.co/sitemap.xml

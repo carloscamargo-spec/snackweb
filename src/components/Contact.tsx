@@ -76,8 +76,9 @@ export default function Contact() {
           </div>
         </div>
 
-        <form className="contact-right reveal delay-1" name="contact" data-netlify="true" onSubmit={onSubmit}>
+        <form className="contact-right reveal delay-1" name="contact" data-netlify="true" data-netlify-honeypot="bot-field" onSubmit={onSubmit}>
           <input type="hidden" name="form-name" value="contact" />
+          <input type="text" name="bot-field" style={{ display: 'none' }} tabIndex={-1} autoComplete="off" />
           <div className="form-stack">
             <div className="form-row">
               <label htmlFor="name"><span>Nombre</span><span className="num">01</span></label>
