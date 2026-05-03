@@ -16,30 +16,41 @@ export default function MediaWithFallback({ src, className, fallbackBg, fallback
   const [fading, setFading] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
 
-  // Programmatic play + overlay removal — covers autoplay policy on mobile
   useEffect(() => {
     const video = videoRef.current;
     if (!video) return;
 
     const dismiss = () => setOverlayGone(true);
 
-    // Primary: first real frame playing
+    // When playing: remove overlay immediately
     video.addEventListener('playing', dismiss, { once: true });
 
-    // Backup A: first frame decoded and ready (fires even if autoplay blocked)
-    video.addEventListener('loadeddata', () => {
-      // Attempt play in case autoPlay attr was ignored
-      video.play().catch(() => {
-        // Autoplay truly blocked — still show the video (paused is fine)
-        dismiss();
-      });
-    }, { once: true });
+    // Attempt autoplay as soon as metadata is ready
+    const tryPlay = () => {
+      const p = video.play();
+      if (p !== undefined) {
+        p.catch(() => {
+          // Autoplay blocked (iOS Low Power Mode, etc.)
+          // Wait for first user touch anywhere on the page, then play silently
+          const playOnTouch = () => {
+            video.play().catch(() => {});
+            document.removeEventListener('touchstart', playOnTouch);
+            document.removeEventListener('click', playOnTouch);
+          };
+          document.addEventListener('touchstart', playOnTouch, { once: true, passive: true });
+          document.addEventListener('click', playOnTouch, { once: true });
+        });
+      }
+    };
 
-    // Backup B: hard timeout — if nothing has fired after 5s just reveal
-    const t = setTimeout(dismiss, 5000);
+    video.addEventListener('loadedmetadata', tryPlay, { once: true });
+
+    // Hard timeout: reveal video after 6s regardless (avoids permanent black screen)
+    const t = setTimeout(dismiss, 6000);
 
     return () => {
       video.removeEventListener('playing', dismiss);
+      video.removeEventListener('loadedmetadata', tryPlay);
       clearTimeout(t);
     };
   }, []);
@@ -89,15 +100,19 @@ export default function MediaWithFallback({ src, className, fallbackBg, fallback
         }}
       />
 
-      {/* Overlay hides all native browser chrome until video is ready */}
-      <div style={{
-        position: 'absolute', inset: 0, zIndex: 10,
-        background: '#090909',
-        pointerEvents: 'none',
-        opacity: overlayGone ? 0 : 1,
-        transition: overlayGone ? 'opacity 1.2s ease' : 'none',
-        overflow: 'hidden',
-      }}>
+      {/* Covers ALL native browser chrome (play button, controls) until video plays */}
+      <div
+        style={{
+          position: 'absolute', inset: 0, zIndex: 10,
+          background: '#090909',
+          // Capture touches while visible so iOS can't show its native button;
+          // once overlay is gone, let touches through to page below
+          pointerEvents: overlayGone ? 'none' : 'auto',
+          opacity: overlayGone ? 0 : 1,
+          transition: overlayGone ? 'opacity 1.2s ease' : 'none',
+          overflow: 'hidden',
+        }}
+      >
         <div style={{
           position: 'absolute', inset: 0,
           background: 'linear-gradient(108deg, transparent 38%, rgba(255,255,255,0.022) 50%, transparent 62%)',
