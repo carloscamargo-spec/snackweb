@@ -6,10 +6,19 @@ export default function Cases() {
   const [autoplay, setAutoplay] = useState(false);
   const sectionRef = useRef<HTMLElement>(null);
   const iframeRef = useRef<HTMLIFrameElement>(null);
+  const stageRef = useRef<HTMLDivElement>(null);
 
   const goTo = useCallback((i: number) => { setAutoplay(true); setIdx(i); }, []);
   const next = useCallback(() => goTo((idx + 1) % CASES.length), [idx, goTo]);
   const prev = useCallback(() => goTo((idx - 1 + CASES.length) % CASES.length), [idx, goTo]);
+
+  const goToAndScroll = useCallback((i: number) => {
+    goTo(i);
+    if (stageRef.current) {
+      const top = stageRef.current.getBoundingClientRect().top + window.scrollY - 130;
+      window.scrollTo({ top, behavior: 'smooth' });
+    }
+  }, [goTo]);
   const cur = CASES[idx];
 
   useEffect(() => {
@@ -39,7 +48,7 @@ export default function Cases() {
         </h2>
       </div>
 
-      <div className="cases-track-wrap reveal">
+      <div ref={stageRef} className="cases-track-wrap reveal">
         <div className="cases-stage" key={cur.id}>
           <iframe
             ref={iframeRef}
@@ -84,7 +93,7 @@ export default function Cases() {
           <div
             key={c.id}
             className={`item ${i === idx ? 'active' : ''}`}
-            onClick={() => goTo(i)}
+            onClick={() => goToAndScroll(i)}
           >
             <div className="thumb">
               <img
