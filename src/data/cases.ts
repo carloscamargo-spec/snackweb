@@ -10,4 +10,5 @@ export const CASES: CaseItem[] = [
   { id: "rvpzk2FUdow", title: "contenido / snack & soda", client: "Snack & Soda · 2025" },
   { id: "ndkx66UTqpo", title: "contenido / snack & soda", client: "Snack & Soda · 2025" },
   { id: "Lz6byCiGmy8", title: "contenido / snack & soda", client: "Snack & Soda · 2025" },
+  { id: "qWpbNdBJnQg", title: "contenido / snack & soda", client: "Snack & Soda · 2025" },
 ];
