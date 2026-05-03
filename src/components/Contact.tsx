@@ -45,7 +45,7 @@ export default function Contact() {
           </h2>
           <p className="contact-body">
             Cuéntanos sobre tu operación. Mercado, vertical, tamaño, objetivos. En 48h te
-            respondemos con un primer diagnóstico y un sí o un no honesto.
+            respondemos con una visión clara y el primer paso para hacerlo realidad.
           </p>
           <div className="contact-meta">
             <div>
