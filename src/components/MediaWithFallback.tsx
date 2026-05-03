@@ -23,28 +23,29 @@ export default function MediaWithFallback({ src, className, fallbackBg, fallback
     const dismiss = () => setOverlayGone(true);
     video.addEventListener('playing', dismiss, { once: true });
 
-    // Call play() immediately — browser queues it even before video loads.
-    // This is the earliest possible moment, before any events fire.
-    const attempt = video.play();
-    if (attempt !== undefined) {
-      attempt.catch(() => {
-        // Autoplay blocked (iOS Low Power Mode / browser policy).
-        // Retry on first touch — fires on the very first finger contact,
-        // even just touching the screen before scrolling.
-        const retryPlay = () => {
-          video.play().catch(() => {});
-          document.removeEventListener('touchstart', retryPlay);
-          document.removeEventListener('click', retryPlay);
-        };
-        document.addEventListener('touchstart', retryPlay, { once: true, passive: true });
-        document.addEventListener('click', retryPlay, { once: true });
+    // Wait for canplay so there's actually data before calling play().
+    // Calling play() before any data on iOS returns AbortError, which we
+    // were incorrectly treating as an autoplay block.
+    const onCanPlay = () => {
+      video.play().catch((err: Error) => {
+        if (err.name === 'NotAllowedError') {
+          // Real autoplay policy block (Low Power Mode, etc.).
+          // Retry on first user touch — fires even on a light scroll tap.
+          const retry = () => { video.play().catch(() => {}); };
+          document.addEventListener('touchstart', retry, { once: true, passive: true });
+          document.addEventListener('click', retry, { once: true });
+        }
+        // Other errors (AbortError) are transient — autoPlay attribute handles retry.
       });
-    }
+    };
+    video.addEventListener('canplay', onCanPlay, { once: true });
 
-    // Safety valve: lift overlay after 6s no matter what
-    const t = setTimeout(dismiss, 6000);
+    // Safety valve: lift overlay after 5s regardless
+    const t = setTimeout(dismiss, 5000);
+
     return () => {
       video.removeEventListener('playing', dismiss);
+      video.removeEventListener('canplay', onCanPlay);
       clearTimeout(t);
     };
   }, []);
