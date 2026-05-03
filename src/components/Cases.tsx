@@ -3,11 +3,14 @@ import { CASES } from '../data/cases';
 
 export default function Cases() {
   const [idx, setIdx] = useState(0);
-  const next = useCallback(() => setIdx((i) => (i + 1) % CASES.length), []);
-  const prev = useCallback(() => setIdx((i) => (i - 1 + CASES.length) % CASES.length), []);
-  const cur = CASES[idx];
+  const [autoplay, setAutoplay] = useState(false);
   const sectionRef = useRef<HTMLElement>(null);
   const iframeRef = useRef<HTMLIFrameElement>(null);
+
+  const goTo = useCallback((i: number) => { setAutoplay(true); setIdx(i); }, []);
+  const next = useCallback(() => goTo((idx + 1) % CASES.length), [idx, goTo]);
+  const prev = useCallback(() => goTo((idx - 1 + CASES.length) % CASES.length), [idx, goTo]);
+  const cur = CASES[idx];
 
   useEffect(() => {
     const section = sectionRef.current;
@@ -40,7 +43,7 @@ export default function Cases() {
         <div className="cases-stage" key={cur.id}>
           <iframe
             ref={iframeRef}
-            src={`https://www.youtube.com/embed/${cur.id}?rel=0&enablejsapi=1`}
+            src={`https://www.youtube.com/embed/${cur.id}?rel=0&enablejsapi=1&modestbranding=1${autoplay ? '&autoplay=1' : ''}`}
             title={cur.title}
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
             allowFullScreen
@@ -63,7 +66,7 @@ export default function Cases() {
             <button
               key={i}
               className={i === idx ? 'active' : ''}
-              onClick={() => setIdx(i)}
+              onClick={() => goTo(i)}
               aria-label={`Ir al caso ${i + 1}`}
             >
               {String(i + 1).padStart(2, '0')}
@@ -81,7 +84,7 @@ export default function Cases() {
           <div
             key={c.id}
             className={`item ${i === idx ? 'active' : ''}`}
-            onClick={() => setIdx(i)}
+            onClick={() => goTo(i)}
           >
             <div className="thumb">
               <img
