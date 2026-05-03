@@ -10,12 +10,41 @@ interface Props {
 }
 
 export default function MediaWithFallback({ src, className, fallbackBg, fallbackLabel, posterGradient, loopFade = false }: Props) {
-  const [missing, setMissing] = useState(false);
-  const [playing, setPlaying] = useState(false);
+  const [overlayGone, setOverlayGone] = useState(false);
+  const [errored, setErrored] = useState(false);
   const [bufPct, setBufPct] = useState(0);
   const [fading, setFading] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
 
+  // Programmatic play + overlay removal — covers autoplay policy on mobile
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return;
+
+    const dismiss = () => setOverlayGone(true);
+
+    // Primary: first real frame playing
+    video.addEventListener('playing', dismiss, { once: true });
+
+    // Backup A: first frame decoded and ready (fires even if autoplay blocked)
+    video.addEventListener('loadeddata', () => {
+      // Attempt play in case autoPlay attr was ignored
+      video.play().catch(() => {
+        // Autoplay truly blocked — still show the video (paused is fine)
+        dismiss();
+      });
+    }, { once: true });
+
+    // Backup B: hard timeout — if nothing has fired after 5s just reveal
+    const t = setTimeout(dismiss, 5000);
+
+    return () => {
+      video.removeEventListener('playing', dismiss);
+      clearTimeout(t);
+    };
+  }, []);
+
+  // Loop crossfade
   useEffect(() => {
     if (!loopFade) return;
     const video = videoRef.current;
@@ -30,12 +59,10 @@ export default function MediaWithFallback({ src, className, fallbackBg, fallback
     return () => video.removeEventListener('timeupdate', onTime);
   }, [loopFade]);
 
-  if (missing) {
+  if (errored) {
     return (
       <div className={className} style={{ background: fallbackBg, backgroundImage: posterGradient, backgroundSize: 'cover', backgroundPosition: 'center', display: 'flex', alignItems: 'flex-end', justifyContent: 'flex-end', padding: 24 }}>
-        <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 10, letterSpacing: '0.22em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.45)' }}>
-          {fallbackLabel}
-        </span>
+        <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 10, letterSpacing: '0.22em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.45)' }}>{fallbackLabel}</span>
       </div>
     );
   }
@@ -54,8 +81,7 @@ export default function MediaWithFallback({ src, className, fallbackBg, fallback
         disablePictureInPicture
         disableRemotePlayback
         x-webkit-airplay="deny"
-        onPlaying={() => setPlaying(true)}
-        onError={() => setMissing(true)}
+        onError={() => setErrored(true)}
         onProgress={() => {
           const v = videoRef.current;
           if (v?.duration && v.buffered.length)
@@ -63,13 +89,13 @@ export default function MediaWithFallback({ src, className, fallbackBg, fallback
         }}
       />
 
-      {/* overlay covers ALL native chrome until first frame plays */}
+      {/* Overlay hides all native browser chrome until video is ready */}
       <div style={{
         position: 'absolute', inset: 0, zIndex: 10,
         background: '#090909',
         pointerEvents: 'none',
-        opacity: playing ? 0 : 1,
-        transition: playing ? 'opacity 1.2s ease' : 'none',
+        opacity: overlayGone ? 0 : 1,
+        transition: overlayGone ? 'opacity 1.2s ease' : 'none',
         overflow: 'hidden',
       }}>
         <div style={{
@@ -77,7 +103,6 @@ export default function MediaWithFallback({ src, className, fallbackBg, fallback
           background: 'linear-gradient(108deg, transparent 38%, rgba(255,255,255,0.022) 50%, transparent 62%)',
           animation: 'heroShimmer 2.4s ease-in-out infinite',
         }} />
-
         <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: 2, background: 'rgba(255,255,255,0.05)' }}>
           {bufPct > 0
             ? <div style={{ height: '100%', width: `${bufPct}%`, background: 'linear-gradient(90deg, rgba(230,253,49,0.35), #e6fd31)', transition: 'width 0.4s ease' }} />
