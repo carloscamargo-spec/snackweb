@@ -489,10 +489,30 @@ a { color: inherit; text-decoration: none; }
 .bear-msg { display: flex; align-items: flex-end; gap: 8px; }
 .bear-msg--user { flex-direction: row-reverse; }
 .bear-msg-avatar { width: 28px; height: 28px; border-radius: 999px; object-fit: cover; flex-shrink: 0; }
-.bear-msg-bubble { max-width: 78%; padding: 10px 14px; border-radius: 16px; font-size: 13.5px; line-height: 1.45; }
+.bear-msg-bubble { max-width: 86%; padding: 10px 14px; border-radius: 16px; font-size: 13.5px; line-height: 1.45; }
 .bear-msg--assistant .bear-msg-bubble { background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.9); border-bottom-left-radius: 4px; }
 .bear-msg--user .bear-msg-bubble { background: var(--brand); color: var(--black); font-weight: 600; border-bottom-right-radius: 4px; }
 .bear-msg-typing { display: flex; gap: 4px; align-items: center; padding: 14px; }
+
+/* ── Mini calendar ── */
+.bear-calendar { margin-top: 12px; background: rgba(0,0,0,0.25); border-radius: 12px; padding: 12px; }
+.bear-cal-nav { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+.bear-cal-nav span { font-size: 12px; font-weight: 700; color: var(--white); letter-spacing: 0.02em; }
+.bear-cal-arrow { background: rgba(255,255,255,0.1); border: 0; color: var(--white); width: 26px; height: 26px; border-radius: 7px; cursor: pointer; font-size: 15px; line-height: 1; display: flex; align-items: center; justify-content: center; }
+.bear-cal-arrow:hover { background: rgba(255,255,255,0.18); }
+.bear-cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px; }
+.bear-cal-dow { text-align: center; font-size: 9px; font-weight: 700; color: rgba(255,255,255,0.3); padding: 3px 0 5px; letter-spacing: 0.05em; }
+.bear-cal-day { background: none; border: 0; color: rgba(255,255,255,0.75); font-size: 11.5px; width: 100%; aspect-ratio: 1; border-radius: 5px; cursor: pointer; font-family: inherit; transition: background 0.1s; }
+.bear-cal-day:not(.disabled):hover { background: rgba(255,255,255,0.12); }
+.bear-cal-day.selected { background: var(--brand) !important; color: var(--black); font-weight: 700; }
+.bear-cal-day.disabled { opacity: 0.2; cursor: not-allowed; }
+.bear-cal-times { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 10px; }
+.bear-cal-time { background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.1); color: rgba(255,255,255,0.8); font-size: 11.5px; padding: 5px 9px; border-radius: 7px; cursor: pointer; font-family: inherit; transition: background 0.1s; }
+.bear-cal-time:hover { background: rgba(255,255,255,0.14); }
+.bear-cal-time.selected { background: var(--brand); color: var(--black); border-color: var(--brand); font-weight: 700; }
+.bear-cal-actions { margin-top: 10px; display: flex; flex-direction: column; gap: 7px; }
+.bear-cta-btn--wa { background: #25d366 !important; color: #fff !important; }
+.bear-cta-btn--wa:hover { background: #1fb955 !important; }
 .bear-msg-typing span { width: 6px; height: 6px; background: rgba(255,255,255,0.4); border-radius: 999px; animation: bearTyping 1.2s ease-in-out infinite; }
 .bear-msg-typing span:nth-child(2) { animation-delay: 0.2s; }
 .bear-msg-typing span:nth-child(3) { animation-delay: 0.4s; }
