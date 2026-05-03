@@ -21,36 +21,30 @@ export default function MediaWithFallback({ src, className, fallbackBg, fallback
     if (!video) return;
 
     const dismiss = () => setOverlayGone(true);
-
-    // When playing: remove overlay immediately
     video.addEventListener('playing', dismiss, { once: true });
 
-    // Attempt autoplay as soon as metadata is ready
-    const tryPlay = () => {
-      const p = video.play();
-      if (p !== undefined) {
-        p.catch(() => {
-          // Autoplay blocked (iOS Low Power Mode, etc.)
-          // Wait for first user touch anywhere on the page, then play silently
-          const playOnTouch = () => {
-            video.play().catch(() => {});
-            document.removeEventListener('touchstart', playOnTouch);
-            document.removeEventListener('click', playOnTouch);
-          };
-          document.addEventListener('touchstart', playOnTouch, { once: true, passive: true });
-          document.addEventListener('click', playOnTouch, { once: true });
-        });
-      }
-    };
+    // Call play() immediately — browser queues it even before video loads.
+    // This is the earliest possible moment, before any events fire.
+    const attempt = video.play();
+    if (attempt !== undefined) {
+      attempt.catch(() => {
+        // Autoplay blocked (iOS Low Power Mode / browser policy).
+        // Retry on first touch — fires on the very first finger contact,
+        // even just touching the screen before scrolling.
+        const retryPlay = () => {
+          video.play().catch(() => {});
+          document.removeEventListener('touchstart', retryPlay);
+          document.removeEventListener('click', retryPlay);
+        };
+        document.addEventListener('touchstart', retryPlay, { once: true, passive: true });
+        document.addEventListener('click', retryPlay, { once: true });
+      });
+    }
 
-    video.addEventListener('loadedmetadata', tryPlay, { once: true });
-
-    // Hard timeout: reveal video after 6s regardless (avoids permanent black screen)
+    // Safety valve: lift overlay after 6s no matter what
     const t = setTimeout(dismiss, 6000);
-
     return () => {
       video.removeEventListener('playing', dismiss);
-      video.removeEventListener('loadedmetadata', tryPlay);
       clearTimeout(t);
     };
   }, []);
