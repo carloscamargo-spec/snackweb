@@ -2,11 +2,28 @@ import { useState } from 'react';
 
 export default function Contact() {
   const [toast, setToast] = useState(false);
+  const [sending, setSending] = useState(false);
 
-  const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    const form = e.target as HTMLFormElement;
+    const data = new FormData(form);
+    setSending(true);
+    try {
+      await fetch('/', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: new URLSearchParams([
+          ['form-name', 'contact'],
+          ...Array.from(data.entries()).map(([k, v]) => [k, v as string]),
+        ]).toString(),
+      });
+    } catch (_) {
+      // submit best-effort; show toast regardless
+    }
+    setSending(false);
     setToast(true);
-    (e.target as HTMLFormElement).reset();
+    form.reset();
     setTimeout(() => setToast(false), 3200);
   };
 
@@ -59,7 +76,8 @@ export default function Contact() {
           </div>
         </div>
 
-        <form className="contact-right reveal delay-1" onSubmit={onSubmit}>
+        <form className="contact-right reveal delay-1" name="contact" data-netlify="true" onSubmit={onSubmit}>
+          <input type="hidden" name="form-name" value="contact" />
           <div className="form-stack">
             <div className="form-row">
               <label htmlFor="name"><span>Nombre</span><span className="num">01</span></label>
@@ -82,8 +100,8 @@ export default function Contact() {
             <p className="form-foot">
               Al enviar aceptas nuestra política de privacidad. Sin spam, sin newsletters automáticos.
             </p>
-            <button className="form-submit" type="submit">
-              Enviar <span className="arrow">→</span>
+            <button className="form-submit" type="submit" disabled={sending}>
+              {sending ? 'Enviando…' : <> Enviar <span className="arrow">→</span></>}
             </button>
           </div>
         </form>
