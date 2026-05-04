@@ -10,38 +10,94 @@ interface Props {
 }
 
 export default function MediaWithFallback({ src, className, fallbackBg, fallbackLabel, posterGradient, loopFade = false }: Props) {
-  const [playing, setPlaying] = useState(false);
-  const [bufPct, setBufPct] = useState(0);
+  const [pct, setPct] = useState(0);
+  const [overlayVisible, setOverlayVisible] = useState(true);
   const [fading, setFading] = useState(false);
   const [errored, setErrored] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
+  const blobRef = useRef('');
 
   useEffect(() => {
     const video = videoRef.current;
     if (!video) return;
 
-    // Force the muted DOM attribute — React sets the property but iOS Safari
-    // reads the HTML attribute for autoplay permission checks.
+    // Force muted on the DOM element — iOS reads the HTML attribute
     video.muted = true;
     video.setAttribute('muted', '');
 
-    const onPlaying = () => setPlaying(true);
+    // Dismiss preloader as soon as first frame plays
+    const onPlaying = () => setOverlayVisible(false);
     video.addEventListener('playing', onPlaying, { once: true });
 
-    // Explicit play() on loadeddata as belt-and-suspenders for React-mounted
-    // videos (browser autoplay scan runs before React's vDOM adds the element).
-    const onLoaded = () => { video.play().catch(() => {}); };
-    video.addEventListener('loadeddata', onLoaded, { once: true });
+    let cancelled = false;
 
-    // Fallback: dismiss overlay after 3s regardless
-    const t = setTimeout(() => setPlaying(true), 3000);
+    (async () => {
+      try {
+        // Fetch the video with real download progress
+        const res = await fetch(src);
+        if (!res.ok || !res.body) throw new Error('bad response');
+
+        const total = parseInt(res.headers.get('content-length') ?? '0', 10);
+        const reader = res.body.getReader();
+        const chunks: Uint8Array<ArrayBuffer>[] = [];
+        let loaded = 0;
+
+        if (!cancelled) setPct(2);
+
+        while (true) {
+          const { done, value } = await reader.read();
+          if (cancelled) { reader.cancel(); return; }
+          if (done) break;
+          if (value) {
+            chunks.push(value);
+            loaded += value.length;
+            // Show real % when Content-Length is available
+            if (total > 0 && !cancelled) {
+              setPct(Math.max(2, Math.min(96, Math.round((loaded / total) * 100))));
+            }
+          }
+        }
+
+        if (cancelled) return;
+
+        // Build blob URL — data already in RAM, no streaming latency on play()
+        const blob = new Blob(chunks, { type: 'video/mp4' });
+        const url = URL.createObjectURL(blob);
+        blobRef.current = url;
+        setPct(100);
+
+        // Set src and force attributes again after src change
+        video.src = url;
+        video.muted = true;
+        video.setAttribute('muted', '');
+        video.load();
+
+        // Small yield so browser can set up the decoder before play()
+        await new Promise(r => setTimeout(r, 80));
+        if (!cancelled) await video.play().catch(() => {});
+
+      } catch {
+        if (cancelled) return;
+        // Network error or no body — fall back to direct streaming src
+        setPct(100);
+        video.src = src;
+        video.muted = true;
+        video.setAttribute('muted', '');
+        video.load();
+        await video.play().catch(() => {});
+      }
+    })();
+
+    // Hard fallback: hide overlay after 8s even if playing never fires
+    const t = setTimeout(() => { if (!cancelled) setOverlayVisible(false); }, 8000);
 
     return () => {
-      video.removeEventListener('playing', onPlaying);
-      video.removeEventListener('loadeddata', onLoaded);
+      cancelled = true;
       clearTimeout(t);
+      video.removeEventListener('playing', onPlaying);
+      if (blobRef.current) { URL.revokeObjectURL(blobRef.current); blobRef.current = ''; }
     };
-  }, []);
+  }, [src]);
 
   // Loop crossfade
   useEffect(() => {
@@ -69,58 +125,75 @@ export default function MediaWithFallback({ src, className, fallbackBg, fallback
   return (
     <div className={className} style={{ overflow: 'hidden', background: '#090909' }}>
 
-      {/*
-        Video is always opacity:1 and visible — iOS Safari only allows autoplay
-        for muted+playsInline videos it considers "visible". opacity:0 was
-        causing iOS to classify it as hidden and block autoplay.
-      */}
+      {/* Video — always visible, no opacity tricks that confuse iOS autoplay */}
       <video
         ref={videoRef}
-        style={{
-          position: 'absolute', inset: 0, width: '100%', height: '100%',
-          objectFit: 'cover', display: 'block', zIndex: 1,
-        }}
-        src={src}
-        autoPlay
+        style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', display: 'block', zIndex: 1 }}
         muted
         loop
         playsInline
-        preload="auto"
+        preload="none"
         disablePictureInPicture
         disableRemotePlayback
         x-webkit-airplay="deny"
         onError={() => setErrored(true)}
-        onProgress={() => {
-          const v = videoRef.current;
-          if (v?.duration && v.buffered.length)
-            setBufPct(Math.round((v.buffered.end(v.buffered.length - 1) / v.duration) * 100));
-        }}
       />
 
-      {/*
-        Overlay covers loading state with shimmer.
-        pointerEvents is ALWAYS 'none' — this is critical: an overlay with
-        pointerEvents:'auto' tells iOS the video is not directly reachable
-        and forces the NotAllowedError even on muted videos.
-      */}
+      {/* Preloader — pointerEvents ALWAYS none, never interferes with iOS */}
       <div style={{
         position: 'absolute', inset: 0, zIndex: 10,
-        background: '#090909',
+        background: '#000',
         pointerEvents: 'none',
-        opacity: playing ? 0 : 1,
-        transition: playing ? 'opacity 1.2s ease' : 'none',
-        overflow: 'hidden',
+        opacity: overlayVisible ? 1 : 0,
+        transition: overlayVisible ? 'none' : 'opacity 1s ease',
       }}>
+        {/* Logo top-left */}
+        <div style={{ position: 'absolute', top: 28, left: 28 }}>
+          <img
+            src="/logo-snack-and-soda-white.png"
+            alt=""
+            style={{ height: 34, width: 'auto', display: 'block' }}
+          />
+        </div>
+
+        {/* Bottom: percentage + bar */}
         <div style={{
-          position: 'absolute', inset: 0,
-          background: 'linear-gradient(108deg, transparent 38%, rgba(255,255,255,0.022) 50%, transparent 62%)',
-          animation: 'heroShimmer 2.4s ease-in-out infinite',
-        }} />
-        <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: 2, background: 'rgba(255,255,255,0.05)' }}>
-          {bufPct > 0
-            ? <div style={{ height: '100%', width: `${bufPct}%`, background: 'linear-gradient(90deg, rgba(230,253,49,0.35), #e6fd31)', transition: 'width 0.4s ease' }} />
-            : <div style={{ position: 'absolute', height: '100%', width: '40%', background: 'linear-gradient(90deg, transparent, rgba(230,253,49,0.55), transparent)', animation: 'heroScan 1.7s ease-in-out infinite' }} />
-          }
+          position: 'absolute', bottom: 0, left: 0, right: 0,
+          padding: '0 28px 36px',
+          display: 'flex', flexDirection: 'column', gap: 10,
+        }}>
+          {/* Counter row */}
+          <div style={{
+            display: 'flex', justifyContent: 'space-between', alignItems: 'baseline',
+          }}>
+            <span style={{
+              fontFamily: 'JetBrains Mono, monospace',
+              fontSize: 10, letterSpacing: '0.22em', textTransform: 'uppercase',
+              color: 'rgba(255,255,255,0.3)',
+            }}>
+              Cargando
+            </span>
+            <span style={{
+              fontFamily: 'JetBrains Mono, monospace',
+              fontSize: 22, fontWeight: 700, letterSpacing: '-0.02em',
+              color: pct === 100 ? '#e6fd31' : '#fff',
+              transition: 'color 0.4s ease',
+              lineHeight: 1,
+            }}>
+              {pct}<span style={{ fontSize: 12, opacity: 0.5, marginLeft: 2 }}>%</span>
+            </span>
+          </div>
+
+          {/* Progress bar */}
+          <div style={{ width: '100%', height: 2, background: 'rgba(255,255,255,0.08)', borderRadius: 1, overflow: 'hidden' }}>
+            <div style={{
+              height: '100%',
+              width: `${pct}%`,
+              background: 'linear-gradient(90deg, rgba(230,253,49,0.6), #e6fd31)',
+              borderRadius: 1,
+              transition: pct > 0 ? 'width 0.35s ease' : 'none',
+            }} />
+          </div>
         </div>
       </div>
 
