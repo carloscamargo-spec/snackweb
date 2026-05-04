@@ -95,6 +95,7 @@ export default function Nav() {
 
       {/* Mobile menu overlay */}
       <div className={`mobile-menu ${menuOpen ? 'open' : ''}`} aria-hidden={!menuOpen}>
+        <button className="mobile-menu-close" onClick={close} aria-label="Cerrar menú">✕</button>
         <nav className="mobile-menu-links">
           {LINKS.map((l, i) => (
             <a
