@@ -77,9 +77,14 @@ a { color: inherit; text-decoration: none; }
   display: inline-flex; align-items: center;
   height: 80px;
   transition: height 350ms cubic-bezier(.4,0,.2,1);
+  flex-shrink: 0;
 }
 .nav.scrolled .nav-logo { height: 48px; }
-.nav-logo img { height: 100%; width: auto; display: block; }
+.nav-logo img { height: 100%; width: auto; display: block; max-width: none; }
+@media (max-width: 879px) {
+  .nav-logo { height: 52px; }
+  .nav.scrolled .nav-logo { height: 40px; }
+}
 .nav-links {
   display: none; gap: 36px; justify-content: center;
   font-size: 13.5px; font-weight: 500; letter-spacing: -0.005em;

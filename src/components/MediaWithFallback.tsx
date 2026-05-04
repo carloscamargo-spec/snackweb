@@ -10,7 +10,7 @@ interface Props {
 }
 
 export default function MediaWithFallback({ src, className, fallbackBg, fallbackLabel, posterGradient, loopFade = false }: Props) {
-  const [visible, setVisible] = useState(false);
+  const [playing, setPlaying] = useState(false);
   const [bufPct, setBufPct] = useState(0);
   const [fading, setFading] = useState(false);
   const [errored, setErrored] = useState(false);
@@ -20,25 +20,24 @@ export default function MediaWithFallback({ src, className, fallbackBg, fallback
     const video = videoRef.current;
     if (!video) return;
 
-    // React doesn't always flush `muted` as an HTML attribute — set it on the
-    // DOM element directly so iOS Safari sees it and permits autoplay.
+    // Force the muted DOM attribute — React sets the property but iOS Safari
+    // reads the HTML attribute for autoplay permission checks.
     video.muted = true;
+    video.setAttribute('muted', '');
 
-    const show = () => setVisible(true);
-    video.addEventListener('playing', show, { once: true });
+    const onPlaying = () => setPlaying(true);
+    video.addEventListener('playing', onPlaying, { once: true });
 
-    // Reinforce play() on loadeddata (first frame decoded).
-    // We do NOT call play() immediately to avoid AbortError on iOS,
-    // and we do NOT add touchstart listeners — that was causing the
-    // "only plays on scroll" problem.
-    const onLoaded = () => video.play().catch(() => {});
+    // Explicit play() on loadeddata as belt-and-suspenders for React-mounted
+    // videos (browser autoplay scan runs before React's vDOM adds the element).
+    const onLoaded = () => { video.play().catch(() => {}); };
     video.addEventListener('loadeddata', onLoaded, { once: true });
 
-    // Hard fallback: reveal after 3s even if playing never fires
-    const t = setTimeout(show, 3000);
+    // Fallback: dismiss overlay after 3s regardless
+    const t = setTimeout(() => setPlaying(true), 3000);
 
     return () => {
-      video.removeEventListener('playing', show);
+      video.removeEventListener('playing', onPlaying);
       video.removeEventListener('loadeddata', onLoaded);
       clearTimeout(t);
     };
@@ -68,44 +67,18 @@ export default function MediaWithFallback({ src, className, fallbackBg, fallback
   }
 
   return (
-    // Dark background acts as loading state — visible through the transparent video
     <div className={className} style={{ overflow: 'hidden', background: '#090909' }}>
 
-      {/* Shimmer sits behind the video, covered naturally when video fades in */}
-      <div style={{
-        position: 'absolute', inset: 0, zIndex: 0,
-        opacity: visible ? 0 : 1,
-        transition: 'opacity 1s ease',
-        pointerEvents: 'none',
-        overflow: 'hidden',
-      }}>
-        <div style={{
-          position: 'absolute', inset: 0,
-          background: 'linear-gradient(108deg, transparent 38%, rgba(255,255,255,0.022) 50%, transparent 62%)',
-          animation: 'heroShimmer 2.4s ease-in-out infinite',
-        }} />
-        <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: 2, background: 'rgba(255,255,255,0.05)' }}>
-          {bufPct > 0
-            ? <div style={{ height: '100%', width: `${bufPct}%`, background: 'linear-gradient(90deg, rgba(230,253,49,0.35), #e6fd31)', transition: 'width 0.4s ease' }} />
-            : <div style={{ position: 'absolute', height: '100%', width: '40%', background: 'linear-gradient(90deg, transparent, rgba(230,253,49,0.55), transparent)', animation: 'heroScan 1.7s ease-in-out infinite' }} />
-          }
-        </div>
-      </div>
-
       {/*
-        Video starts at opacity:0 — this hides ALL native browser chrome
-        (play button, controls) without blocking iOS autoplay.
-        An overlay div with pointerEvents:auto WAS the root cause: iOS
-        treats a covered video as non-interactable and requires a gesture
-        even for muted+playsInline videos.
+        Video is always opacity:1 and visible — iOS Safari only allows autoplay
+        for muted+playsInline videos it considers "visible". opacity:0 was
+        causing iOS to classify it as hidden and block autoplay.
       */}
       <video
         ref={videoRef}
         style={{
           position: 'absolute', inset: 0, width: '100%', height: '100%',
           objectFit: 'cover', display: 'block', zIndex: 1,
-          opacity: visible ? 1 : 0,
-          transition: visible ? 'opacity 1.2s ease' : 'none',
         }}
         src={src}
         autoPlay
@@ -123,6 +96,33 @@ export default function MediaWithFallback({ src, className, fallbackBg, fallback
             setBufPct(Math.round((v.buffered.end(v.buffered.length - 1) / v.duration) * 100));
         }}
       />
+
+      {/*
+        Overlay covers loading state with shimmer.
+        pointerEvents is ALWAYS 'none' — this is critical: an overlay with
+        pointerEvents:'auto' tells iOS the video is not directly reachable
+        and forces the NotAllowedError even on muted videos.
+      */}
+      <div style={{
+        position: 'absolute', inset: 0, zIndex: 10,
+        background: '#090909',
+        pointerEvents: 'none',
+        opacity: playing ? 0 : 1,
+        transition: playing ? 'opacity 1.2s ease' : 'none',
+        overflow: 'hidden',
+      }}>
+        <div style={{
+          position: 'absolute', inset: 0,
+          background: 'linear-gradient(108deg, transparent 38%, rgba(255,255,255,0.022) 50%, transparent 62%)',
+          animation: 'heroShimmer 2.4s ease-in-out infinite',
+        }} />
+        <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: 2, background: 'rgba(255,255,255,0.05)' }}>
+          {bufPct > 0
+            ? <div style={{ height: '100%', width: `${bufPct}%`, background: 'linear-gradient(90deg, rgba(230,253,49,0.35), #e6fd31)', transition: 'width 0.4s ease' }} />
+            : <div style={{ position: 'absolute', height: '100%', width: '40%', background: 'linear-gradient(90deg, transparent, rgba(230,253,49,0.55), transparent)', animation: 'heroScan 1.7s ease-in-out infinite' }} />
+          }
+        </div>
+      </div>
 
       {loopFade && (
         <div style={{
