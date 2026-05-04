@@ -108,15 +108,15 @@ export default function MediaWithFallback({
         <div style={{
           position: 'absolute',
           top: '50%', left: '12%', right: '12%',
-          height: 2,
+          height: 1,
           transform: 'translateY(-50%)',
           background: 'rgba(255,255,255,0.07)',
-          borderRadius: 2,
+          borderRadius: 1,
           overflow: 'hidden',
         }}>
           <div style={{
             height: '100%',
-            background: '#4ade80',
+            background: '#e6fd31',
             borderRadius: 2,
             animation: 'loaderGrow 2.8s cubic-bezier(0.4,0,0.2,1) forwards',
           }} />
