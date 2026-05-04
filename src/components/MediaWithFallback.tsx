@@ -12,50 +12,39 @@ interface Props {
 export default function MediaWithFallback({
   src, className, fallbackBg, fallbackLabel, posterGradient, loopFade = false,
 }: Props) {
-  const [pct, setPct]                   = useState(0);
-  const [overlayVisible, setOverlayVisible] = useState(true);
-  const [fading, setFading]             = useState(false);
-  const [errored, setErrored]           = useState(false);
+  const [ready, setReady] = useState(false);
+  const [fading, setFading] = useState(false);
+  const [errored, setErrored] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
 
   useEffect(() => {
     const video = videoRef.current;
     if (!video) return;
 
-    // Ensure muted is set both as DOM property and HTML attribute.
-    // iOS Safari reads the attribute; React sometimes only sets the property.
+    // Set every muted/autoplay/playsinline flag both as property and attribute.
+    // iOS Safari requires the HTML attributes to be present in the DOM,
+    // not just the JS properties that React sets.
     video.muted = true;
     video.setAttribute('muted', '');
+    video.setAttribute('autoplay', '');
+    video.setAttribute('playsinline', '');
 
-    // ── Overlay dismissal ──────────────────────────────────────────────
-    const dismiss = () => setOverlayVisible(false);
-    video.addEventListener('playing', dismiss, { once: true });
+    const show = () => setReady(true);
+    video.addEventListener('playing', show, { once: true });
 
-    // ── Progress via native buffered API (no fetch, no double download) ─
-    const onProgress = () => {
-      if (!video.duration || !video.buffered.length) return;
-      const end = video.buffered.end(video.buffered.length - 1);
-      setPct(Math.min(95, Math.round((end / video.duration) * 100)));
-    };
-    video.addEventListener('progress', onProgress);
-    video.addEventListener('loadedmetadata', onProgress);
+    // Attempt play on every data-available event
+    const tryPlay = () => { video.muted = true; video.play().catch(() => {}); };
+    video.addEventListener('canplay',    tryPlay, { once: true });
+    video.addEventListener('loadeddata', tryPlay, { once: true });
 
-    // ── Belt-and-suspenders play() once first frame decoded ────────────
-    const onLoaded = () => {
-      video.muted = true;
-      video.play().catch(() => {});
-    };
-    video.addEventListener('loadeddata', onLoaded, { once: true });
-
-    // ── Hard timeout: show video after 6s regardless ───────────────────
-    const t = setTimeout(dismiss, 6000);
+    // Absolute fallback — reveal after 5s no matter what
+    const t = setTimeout(show, 5000);
 
     return () => {
       clearTimeout(t);
-      video.removeEventListener('playing', dismiss);
-      video.removeEventListener('progress', onProgress);
-      video.removeEventListener('loadedmetadata', onProgress);
-      video.removeEventListener('loadeddata', onLoaded);
+      video.removeEventListener('playing',    show);
+      video.removeEventListener('canplay',    tryPlay);
+      video.removeEventListener('loadeddata', tryPlay);
     };
   }, [src]);
 
@@ -89,10 +78,9 @@ export default function MediaWithFallback({
   }
 
   return (
-    <div className={className} style={{ overflow: 'hidden', background: '#090909' }}>
+    <div className={className} style={{ overflow: 'hidden', background: '#000' }}>
 
-      {/* Native video — autoPlay + muted + playsInline is the correct
-          autoplay path on all browsers. No fetch() wrapper, no blob URL. */}
+      {/* Video — always rendered, autoPlay + muted + playsInline */}
       <video
         ref={videoRef}
         style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', display: 'block', zIndex: 1 }}
@@ -108,41 +96,30 @@ export default function MediaWithFallback({
         onError={() => setErrored(true)}
       />
 
-      {/* Preloader overlay ─────────────────────────────────────────────
-          pointerEvents is ALWAYS 'none'. An overlay with pointerEvents:'auto'
-          causes iOS to treat the video as "not directly reachable" and block
-          autoplay even for muted+playsInline videos.              */}
+      {/* Loader overlay — pointerEvents NEVER 'auto' (breaks iOS autoplay) */}
       <div style={{
         position: 'absolute', inset: 0, zIndex: 10,
         background: '#000',
         pointerEvents: 'none',
-        opacity: overlayVisible ? 1 : 0,
-        transition: overlayVisible ? 'none' : 'opacity 1.1s ease',
+        opacity: ready ? 0 : 1,
+        transition: ready ? 'opacity 0.9s ease' : 'none',
       }}>
-        {/* Logo */}
-        <div style={{ position: 'absolute', top: 28, left: 28 }}>
-          <img src="/logo-snack-and-soda-white.png" alt="" style={{ height: 34, width: 'auto', display: 'block' }} />
-        </div>
-
-        {/* Bottom: label + % + bar */}
-        <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, padding: '0 28px 36px', display: 'flex', flexDirection: 'column', gap: 10 }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
-            <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 10, letterSpacing: '0.22em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.3)' }}>
-              Cargando
-            </span>
-            <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 22, fontWeight: 700, letterSpacing: '-0.02em', color: pct >= 95 ? '#e6fd31' : '#fff', transition: 'color 0.4s ease', lineHeight: 1 }}>
-              {pct}<span style={{ fontSize: 12, opacity: 0.5, marginLeft: 2 }}>%</span>
-            </span>
-          </div>
-
-          {/* Determinate bar when buffered data is available,
-              scanning animation while waiting for duration */}
-          <div style={{ width: '100%', height: 2, background: 'rgba(255,255,255,0.08)', borderRadius: 1, overflow: 'hidden', position: 'relative' }}>
-            {pct > 0
-              ? <div style={{ height: '100%', width: `${pct}%`, background: 'linear-gradient(90deg, rgba(230,253,49,0.5), #e6fd31)', borderRadius: 1, transition: 'width 0.4s ease' }} />
-              : <div style={{ position: 'absolute', height: '100%', width: '40%', background: 'linear-gradient(90deg, transparent, rgba(230,253,49,0.55), transparent)', animation: 'heroScan 1.7s ease-in-out infinite' }} />
-            }
-          </div>
+        {/* Thin line centred on screen */}
+        <div style={{
+          position: 'absolute',
+          top: '50%', left: '12%', right: '12%',
+          height: 2,
+          transform: 'translateY(-50%)',
+          background: 'rgba(255,255,255,0.07)',
+          borderRadius: 2,
+          overflow: 'hidden',
+        }}>
+          <div style={{
+            height: '100%',
+            background: '#4ade80',
+            borderRadius: 2,
+            animation: 'loaderGrow 2.8s cubic-bezier(0.4,0,0.2,1) forwards',
+          }} />
         </div>
       </div>
 
