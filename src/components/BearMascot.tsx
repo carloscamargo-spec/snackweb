@@ -36,7 +36,7 @@ function MiniCalendar() {
     const h = parseInt(selTime);
     const s = new Date(selDate); s.setHours(h,0,0,0);
     const e = new Date(s); e.setHours(h+1);
-    return `https://calendar.google.com/calendar/render?action=TEMPLATE&text=Reuni%C3%B3n+con+Snack+%26+Soda&details=Estrategia+de+contenido+para+betting+y+entretenimiento+en+LATAM&dates=${fmt(s)}/${fmt(e)}`;
+    return `https://calendar.google.com/calendar/render?action=TEMPLATE&text=Reuni%C3%B3n+con+Snack+%26+Soda&details=Estrategia+de+contenido+para+betting+y+entretenimiento+en+LATAM&dates=${fmt(s)}/${fmt(e)}&add=carlos.camargo%40snackandsoda.co`;
   };
   const waLink = () => {
     if (!selDate || !selTime) return '#';
