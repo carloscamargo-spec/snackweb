@@ -3,10 +3,8 @@
   publish = "dist"
   functions = "netlify/functions"
 
-[[redirects]]
-  from = "/*"
-  to = "/index.html"
-  status = 200
+# No SPA catch-all: the site is a single prerendered page, so unknown URLs
+# must return a real 404 (Netlify serves dist/404.html automatically).
 
 # ── Security headers ───────────────────────────────────────────────────────
 [[headers]]
