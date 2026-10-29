@@ -1,5 +1,6 @@
 import { CASE_STUDIES, findCaseStudy } from './data/caseStudies';
-import type { CaseStudy, CaseVideo } from './types';
+import { MARKETS, findMarket } from './data/markets';
+import type { CaseStudy, CaseVideo, Market } from './types';
 
 export const SITE_URL = 'https://snackandsoda.co';
 const ORG_ID = `${SITE_URL}/#organization`;
@@ -8,6 +9,8 @@ export type Route =
   | { kind: 'home'; path: '/' }
   | { kind: 'cases'; path: '/casos/' }
   | { kind: 'case'; path: string; study: CaseStudy }
+  | { kind: 'markets'; path: '/mercados/' }
+  | { kind: 'market'; path: string; market: Market }
   | { kind: 'not-found'; path: string };
 
 export interface PageMeta {
@@ -22,17 +25,30 @@ export interface PageMeta {
 // so every internal link, canonical and sitemap entry uses the trailing slash.
 export const CASES_PATH = '/casos/';
 export const casePath = (slug: string): string => `/casos/${slug}/`;
+export const MARKETS_PATH = '/mercados/';
+export const marketPath = (slug: string): string => `/mercados/${slug}/`;
 
 // Every URL the build prerenders, in sitemap order.
-export const PRERENDER_PATHS: string[] = ['/', CASES_PATH, ...CASE_STUDIES.map((c) => casePath(c.slug))];
+export const PRERENDER_PATHS: string[] = [
+  '/',
+  CASES_PATH,
+  ...CASE_STUDIES.map((c) => casePath(c.slug)),
+  MARKETS_PATH,
+  ...MARKETS.map((m) => marketPath(m.slug)),
+];
 
 export function resolveRoute(pathname: string): Route {
   const path = pathname.replace(/\/+$/, '') || '/';
   if (path === '/') return { kind: 'home', path: '/' };
   if (path === '/casos') return { kind: 'cases', path: CASES_PATH };
-  const match = path.match(/^\/casos\/([a-z0-9-]+)$/);
-  const study = match ? findCaseStudy(match[1]) : undefined;
-  return study ? { kind: 'case', path, study } : { kind: 'not-found', path };
+  if (path === '/mercados') return { kind: 'markets', path: MARKETS_PATH };
+  const caseMatch = path.match(/^\/casos\/([a-z0-9-]+)$/);
+  const study = caseMatch ? findCaseStudy(caseMatch[1]) : undefined;
+  if (study) return { kind: 'case', path, study };
+  const marketMatch = path.match(/^\/mercados\/([a-z0-9-]+)$/);
+  const market = marketMatch ? findMarket(marketMatch[1]) : undefined;
+  if (market) return { kind: 'market', path, market };
+  return { kind: 'not-found', path };
 }
 
 const isoDuration = (sec: number): string => `PT${Math.floor(sec / 60)}M${sec % 60}S`;
@@ -91,6 +107,72 @@ export function metaFor(route: Route): PageMeta | null {
         breadcrumbs([
           { name: 'Inicio', path: '/' },
           { name: 'Casos', path: CASES_PATH },
+        ]),
+      ],
+    };
+  }
+
+  if (route.kind === 'markets') {
+    return {
+      title: 'Agencia de publicidad para casas de apuestas en LATAM | Snack & Soda',
+      description:
+        'Publicidad y contenido para casas de apuestas e iGaming en Colombia, México, Perú, Argentina, Ecuador, El Salvador y Honduras.',
+      canonical: `${SITE_URL}${MARKETS_PATH}`,
+      ogType: 'website',
+      jsonLd: [
+        {
+          '@context': 'https://schema.org',
+          '@type': 'CollectionPage',
+          name: 'Mercados de Snack & Soda en LATAM',
+          url: `${SITE_URL}${MARKETS_PATH}`,
+          inLanguage: 'es',
+          publisher: { '@id': ORG_ID },
+          mainEntity: {
+            '@type': 'ItemList',
+            itemListElement: MARKETS.map((m, i) => ({
+              '@type': 'ListItem',
+              position: i + 1,
+              url: `${SITE_URL}${marketPath(m.slug)}`,
+              name: `Publicidad para casas de apuestas en ${m.country}`,
+            })),
+          },
+        },
+        breadcrumbs([
+          { name: 'Inicio', path: '/' },
+          { name: 'Mercados', path: MARKETS_PATH },
+        ]),
+      ],
+    };
+  }
+
+  if (route.kind === 'market') {
+    const { market } = route;
+    const url = `${SITE_URL}${marketPath(market.slug)}`;
+    return {
+      title: `Agencia de publicidad para casas de apuestas en ${market.country} | Snack & Soda`,
+      description: market.summary.length > 155 ? `${market.summary.slice(0, 152).trimEnd()}…` : market.summary,
+      canonical: url,
+      ogType: 'website',
+      jsonLd: [
+        {
+          '@context': 'https://schema.org',
+          '@type': 'Service',
+          '@id': `${url}#service`,
+          name: `Publicidad y contenido para casas de apuestas e iGaming en ${market.country}`,
+          serviceType: 'Agencia de contenido y publicidad para casas de apuestas e iGaming',
+          description: market.summary,
+          url,
+          provider: { '@id': ORG_ID },
+          areaServed: { '@type': 'Country', name: market.country, identifier: market.countryCode },
+          audience: {
+            '@type': 'BusinessAudience',
+            audienceType: `Operadores de apuestas deportivas, casinos online y marcas de iGaming en ${market.country}`,
+          },
+        },
+        breadcrumbs([
+          { name: 'Inicio', path: '/' },
+          { name: 'Mercados', path: MARKETS_PATH },
+          { name: market.country, path: marketPath(market.slug) },
         ]),
       ],
     };
