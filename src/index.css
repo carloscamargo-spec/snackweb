@@ -514,6 +514,9 @@ video::-internal-media-controls-overflow-button {
 
 .toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(20px); background: var(--black); color: var(--brand); padding: 14px 22px; border-radius: 999px; font-size: 13px; font-weight: 500; letter-spacing: -0.005em; display: flex; align-items: center; gap: 10px; border: 1px solid var(--brand); opacity: 0; pointer-events: none; transition: all 320ms ease; z-index: 200; }
 .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+.toast .toast-dot { color: var(--brand); }
+.toast.error { color: var(--white); border-color: #ff5a4e; border-radius: 16px; width: max-content; max-width: calc(100vw - 32px); }
+.toast.error .toast-dot { color: #ff5a4e; }
 
 .footer { background: var(--black); color: var(--white); padding: clamp(80px, 12vh, 140px) var(--page-pad) 36px; border-top: 1px solid var(--neutral-800); }
 .footer-grid { display: grid; grid-template-columns: repeat(12, minmax(0,1fr)); gap: var(--grid-gutter); border-top: 1px solid var(--neutral-800); padding-top: 36px; }

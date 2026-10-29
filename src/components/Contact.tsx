@@ -1,7 +1,11 @@
 import { useState } from 'react';
 
+type SubmitStatus = 'idle' | 'sent' | 'error';
+
+const TOAST_MS: Record<Exclude<SubmitStatus, 'idle'>, number> = { sent: 3200, error: 6000 };
+
 export default function Contact() {
-  const [toast, setToast] = useState(false);
+  const [status, setStatus] = useState<SubmitStatus>('idle');
   const [sending, setSending] = useState(false);
 
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -9,8 +13,9 @@ export default function Contact() {
     const form = e.target as HTMLFormElement;
     const data = new FormData(form);
     setSending(true);
+    let result: SubmitStatus = 'error';
     try {
-      await fetch('/', {
+      const res = await fetch('/', {
         method: 'POST',
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
         body: new URLSearchParams([
@@ -18,13 +23,15 @@ export default function Contact() {
           ...Array.from(data.entries()).map(([k, v]) => [k, v as string]),
         ]).toString(),
       });
+      if (res.ok) result = 'sent';
     } catch (_) {
-      // submit best-effort; show toast regardless
+      // network failure: fall through to the error toast
     }
     setSending(false);
-    setToast(true);
-    form.reset();
-    setTimeout(() => setToast(false), 3200);
+    setStatus(result);
+    // Keep what the visitor typed when the submission failed, so they can retry or copy it.
+    if (result === 'sent') form.reset();
+    setTimeout(() => setStatus('idle'), TOAST_MS[result]);
   };
 
   return (
@@ -112,9 +119,11 @@ export default function Contact() {
         <img src="/logo-snack-and-soda-black.png" alt="" />
       </div>
 
-      <div className={`toast ${toast ? 'show' : ''}`}>
-        <span style={{ color: 'var(--brand)' }}>●</span>
-        Recibido. Respondemos en menos de 48h.
+      <div className={`toast ${status !== 'idle' ? 'show' : ''} ${status === 'error' ? 'error' : ''}`} role="status" aria-live="polite">
+        <span className="toast-dot">●</span>
+        {status === 'error'
+          ? 'No pudimos enviarlo. Escríbenos a carlos.camargo@snackandsoda.co o por WhatsApp.'
+          : 'Recibido. Respondemos en menos de 48h.'}
       </div>
     </section>
   );
