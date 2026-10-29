@@ -5,8 +5,8 @@ export default function Footer() {
         <div className="footer-col col-1">
           <div className="key">Manifiesto</div>
           <div className="val" style={{ maxWidth: '32ch', lineHeight: 1.5 }}>
-            Entretenimiento, betting &amp; gaming agency para LATAM. Hacemos contenido para
-            audiencias que odian los anuncios.
+            Agencia de contenido y publicidad para casas de apuestas, iGaming y entretenimiento en
+            LATAM. Hacemos contenido para audiencias que odian los anuncios.
           </div>
         </div>
         <div className="footer-col col-2">

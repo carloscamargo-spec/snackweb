@@ -65,9 +65,9 @@ export function metaFor(route: Route): PageMeta | null {
 
   if (route.kind === 'cases') {
     return {
-      title: 'Casos de éxito en betting y gaming | Snack & Soda',
+      title: 'Casos de éxito: publicidad para casas de apuestas | Snack & Soda',
       description:
-        'Campañas para Wplay, YaJuego y LUKA: contenido de entretenimiento para casas de apuestas en Colombia y LATAM. Mira los casos de Snack & Soda.',
+        'Campañas de publicidad y contenido para Wplay, YaJuego y LUKA: casos de nuestra agencia para casas de apuestas e iGaming en Colombia y LATAM.',
       canonical: `${SITE_URL}${CASES_PATH}`,
       ogType: 'website',
       jsonLd: [
@@ -99,7 +99,7 @@ export function metaFor(route: Route): PageMeta | null {
   const { study } = route;
   const url = `${SITE_URL}${casePath(study.slug)}`;
   return {
-    title: `${study.shortTitle} | Caso de éxito · Snack & Soda`,
+    title: `${study.shortTitle} | Caso de publicidad · Snack & Soda`,
     description: study.summary.length > 155 ? `${study.summary.slice(0, 152).trimEnd()}…` : study.summary,
     canonical: url,
     ogType: 'article',
