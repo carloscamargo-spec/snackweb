@@ -24,9 +24,9 @@ export default function Footer() {
         </div>
         <div className="footer-col col-4">
           <div className="key">Social</div>
-          <a className="val" href="https://instagram.com/" target="_blank" rel="noopener">Instagram ↗</a>
-          <a className="val" href="https://youtube.com/" target="_blank" rel="noopener">YouTube ↗</a>
-          <a className="val" href="https://tiktok.com/" target="_blank" rel="noopener">TikTok ↗</a>
+          <a className="val" href="https://www.instagram.com/snackandsoda/" target="_blank" rel="noopener">Instagram ↗</a>
+          <a className="val" href="https://www.youtube.com/@SnackAndSoda" target="_blank" rel="noopener">YouTube ↗</a>
+          <a className="val" href="https://www.tiktok.com/@snackandsoda.co" target="_blank" rel="noopener">TikTok ↗</a>
         </div>
       </div>
       <div className="footer-bottom">
