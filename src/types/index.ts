@@ -2,6 +2,7 @@ export interface CaseItem {
   id: string;
   title: string;
   client: string;
+  slug?: string;
 }
 
 export interface TruthCard {
@@ -27,4 +28,33 @@ export interface TweakValues {
   brand: string;
   showMarquee: boolean;
   showHeroMeta: boolean;
+}
+
+export interface CaseVideo {
+  id: string;
+  name: string;
+  uploadDate: string;
+  durationSec: number;
+}
+
+export interface CaseResult {
+  value: string;
+  label: string;
+}
+
+export interface CaseStudy {
+  slug: string;
+  client: string;
+  title: string;
+  shortTitle: string;
+  market: string;
+  years: string;
+  category: string;
+  summary: string;
+  challenge: string;
+  idea: string;
+  execution: string[];
+  results: CaseResult[];
+  videos: CaseVideo[];
+  awards?: string[];
 }

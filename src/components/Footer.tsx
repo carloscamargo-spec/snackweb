@@ -17,10 +17,10 @@ export default function Footer() {
         </div>
         <div className="footer-col col-3">
           <div className="key">Navegación</div>
-          <a className="val" href="#problema">El problema</a>
-          <a className="val" href="#framework">Framework</a>
-          <a className="val" href="#casos">Casos</a>
-          <a className="val" href="#contacto">Hablemos</a>
+          <a className="val" href="/#problema">El problema</a>
+          <a className="val" href="/#framework">Framework</a>
+          <a className="val" href="/casos">Casos de éxito</a>
+          <a className="val" href="/#contacto">Hablemos</a>
         </div>
         <div className="footer-col col-4">
           <div className="key">Social</div>

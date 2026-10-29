@@ -1,12 +1,12 @@
 import { useState, useEffect } from 'react';
 
 const LINKS = [
-  { href: '#problema',   num: '01', label: 'Problema' },
-  { href: '#manifiesto', num: '02', label: 'Manifiesto' },
-  { href: '#verdad',     num: '03', label: 'Datos' },
-  { href: '#framework',  num: '05', label: 'Framework' },
-  { href: '#casos',      num: '06', label: 'Casos' },
-  { href: '#contacto',   num: '07', label: 'Hablemos' },
+  { href: '/#problema',   num: '01', label: 'Problema' },
+  { href: '/#manifiesto', num: '02', label: 'Manifiesto' },
+  { href: '/#verdad',     num: '03', label: 'Datos' },
+  { href: '/#framework',  num: '05', label: 'Framework' },
+  { href: '/#casos',      num: '06', label: 'Casos' },
+  { href: '/#contacto',   num: '07', label: 'Hablemos' },
 ];
 
 export default function Nav() {
@@ -53,7 +53,7 @@ export default function Nav() {
     <>
       <header className={`nav ${scrolled ? 'scrolled' : ''}`}>
         <div className="nav-inner">
-          <a href="#top" className="nav-logo" aria-label="Snack and Soda" onClick={close}>
+          <a href="/#top" className="nav-logo" aria-label="Snack and Soda" onClick={close}>
             <img src="/logo-snack-and-soda-white.png" alt="Snack and Soda" />
           </a>
           <nav className="nav-links" aria-label="Main">
