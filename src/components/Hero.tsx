@@ -21,14 +21,15 @@ export default function Hero() {
         </div>
 
         <div className="hero-bottom">
-          <h1 className="hero-headline reveal" style={{ lineHeight: 1 }}>
+          <div className="hero-headline reveal" style={{ lineHeight: 1 }}>
             snack <span className="amp">&amp;</span> soda<span className="dot">.</span>
-          </h1>
+          </div>
           <div className="hero-sub">
-            <p className="hero-tagline reveal delay-1">
+            {/* The page's H1 is the value proposition; the wordmark above is the brand, not the topic. */}
+            <h1 className="hero-tagline reveal delay-1">
               <strong>A content agency for ads haters.</strong> Convertimos betting &amp; gaming en
               entretenimiento que la audiencia decide ver — no que tolera.
-            </p>
+            </h1>
             <div className="hero-index reveal delay-2">
               <span>Issue N° 026</span>
               <span>·</span>

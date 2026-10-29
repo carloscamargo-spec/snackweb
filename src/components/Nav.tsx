@@ -69,7 +69,7 @@ export default function Nav() {
                   <circle cx="17.5" cy="6.5" r="0.8" fill="currentColor" stroke="none" />
                 </svg>
               </a>
-              <a href="https://tiktok.com/" target="_blank" rel="noopener" className="nav-social-link" aria-label="TikTok">
+              <a href="https://www.tiktok.com/@snackandsoda.co" target="_blank" rel="noopener" className="nav-social-link" aria-label="TikTok">
                 <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
                   <path d="M16.5 3h-2.7v12.2a2.6 2.6 0 1 1-2.6-2.6c.27 0 .53.04.78.12v-2.78a5.4 5.4 0 1 0 4.62 5.34V8.43a6.7 6.7 0 0 0 4 1.32V7a4 4 0 0 1-4-4z" />
                 </svg>
@@ -119,7 +119,7 @@ export default function Nav() {
                 <circle cx="17.5" cy="6.5" r="0.8" fill="currentColor" stroke="none" />
               </svg>
             </a>
-            <a href="https://tiktok.com/" target="_blank" rel="noopener" className="nav-social-link" aria-label="TikTok">
+            <a href="https://www.tiktok.com/@snackandsoda.co" target="_blank" rel="noopener" className="nav-social-link" aria-label="TikTok">
               <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
                 <path d="M16.5 3h-2.7v12.2a2.6 2.6 0 1 1-2.6-2.6c.27 0 .53.04.78.12v-2.78a5.4 5.4 0 1 0 4.62 5.34V8.43a6.7 6.7 0 0 0 4 1.32V7a4 4 0 0 1-4-4z" />
               </svg>
