@@ -1,12 +1,12 @@
 import { StrictMode } from 'react';
 import { createRoot, hydrateRoot } from 'react-dom/client';
 import './index.css';
-import App from './App';
+import Root from './Root';
 
 const container = document.getElementById('root')!;
 const app = (
   <StrictMode>
-    <App />
+    <Root path={window.location.pathname} />
   </StrictMode>
 );
 

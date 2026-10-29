@@ -1,5 +1,6 @@
 import { useState, useCallback, useEffect, useRef } from 'react';
 import { CASES } from '../data/cases';
+import { casePath } from '../routes';
 
 export default function Cases() {
   const [idx, setIdx] = useState(0);
@@ -108,8 +109,17 @@ export default function Cases() {
             <div className="num">CASE / {String(i + 1).padStart(2, '0')}</div>
             <div className="ttl">{c.title}</div>
             <div className="meta">{c.client}</div>
+            {c.slug && (
+              <a className="case-link" href={casePath(c.slug)} onClick={(e) => e.stopPropagation()}>
+                Ver caso <span aria-hidden="true">→</span>
+              </a>
+            )}
           </div>
         ))}
+      </div>
+
+      <div className="cases-all">
+        <a href="/casos/">Ver todos los casos de éxito <span aria-hidden="true">→</span></a>
       </div>
     </section>
   );
