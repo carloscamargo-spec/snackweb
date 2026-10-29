@@ -18,3 +18,10 @@
     Content-Security-Policy = "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https://*.ytimg.com https://i.ytimg.com; media-src 'self'; frame-src https://www.youtube.com; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests"
     Cross-Origin-Opener-Policy = "same-origin-allow-popups"
     Cross-Origin-Resource-Policy = "same-site"
+
+# Share images are embedded by other sites (LinkedIn, Slack, WhatsApp Web),
+# so they must not be limited to same-site loads like the rest of the site.
+[[headers]]
+  for = "/og-image.jpg"
+  [headers.values]
+    Cross-Origin-Resource-Policy = "cross-origin"
