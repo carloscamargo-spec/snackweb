@@ -1,6 +1,7 @@
 import { useReveal } from '../hooks/useReveal';
 import Nav from '../components/Nav';
 import Footer from '../components/Footer';
+import BearMascot from '../components/BearMascot';
 import PageHero from '../components/PageHero';
 import { MARKETS } from '../data/markets';
 import { marketPath } from '../routes';
@@ -50,6 +51,7 @@ export default function MarketsIndexPage() {
         </section>
       </main>
       <Footer />
+      <BearMascot />
     </>
   );
 }

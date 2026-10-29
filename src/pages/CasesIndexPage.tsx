@@ -1,6 +1,7 @@
 import { useReveal } from '../hooks/useReveal';
 import Nav from '../components/Nav';
 import Footer from '../components/Footer';
+import BearMascot from '../components/BearMascot';
 import PageHero from '../components/PageHero';
 import { CASE_STUDIES } from '../data/caseStudies';
 import { casePath } from '../routes';
@@ -65,6 +66,7 @@ export default function CasesIndexPage() {
         </section>
       </main>
       <Footer />
+      <BearMascot />
     </>
   );
 }
