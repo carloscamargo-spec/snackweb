@@ -258,8 +258,8 @@ video::-internal-media-controls-overflow-button {
   gap: var(--grid-gutter); margin-top: 18px; align-items: end;
 }
 .hero-tagline {
-  grid-column: 1 / span 7; font-size: clamp(0.875rem, 1.05vw, 1.1rem);
-  color: rgba(255,255,255,0.78); max-width: 42ch; text-wrap: balance;
+  grid-column: 1 / span 7; font-size: clamp(0.8125rem, 0.9vw, 0.95rem);
+  color: rgba(255,255,255,0.78); max-width: 46ch; text-wrap: balance;
 }
 .hero-tagline strong { color: var(--white); font-weight: 600; }
 .hero-index {
