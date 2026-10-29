@@ -267,7 +267,7 @@ video::-internal-media-controls-overflow-button {
   gap: 18px; font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: rgba(255,255,255,0.6);
 }
 .scroll-cue {
-  position: absolute; left: var(--page-pad); bottom: 28px; display: flex; align-items: center;
+  position: absolute; left: 50%; transform: translateX(-50%); bottom: 28px; display: flex; align-items: center;
   gap: 10px; font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase;
   color: rgba(255,255,255,0.55); z-index: 4;
 }
@@ -730,3 +730,6 @@ video::-internal-media-controls-overflow-button {
   .page-more-client { grid-column: 1 / -1; }
 }
 .page-note { margin-top: 18px !important; font-size: 13px; color: var(--neutral-500); }
+/* The hero tagline sits bottom-left and the index bottom-right; on narrow
+   screens they fill the bottom edge, so the scroll cue would overlap them. */
+@media (max-width: 900px) { .scroll-cue { display: none; } }
