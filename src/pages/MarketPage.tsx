@@ -1,6 +1,7 @@
 import { useReveal } from '../hooks/useReveal';
 import Nav from '../components/Nav';
 import Footer from '../components/Footer';
+import BearMascot from '../components/BearMascot';
 import PageHero from '../components/PageHero';
 import { CASE_STUDIES } from '../data/caseStudies';
 import { MARKETS, MARKETS_REVIEWED } from '../data/markets';
@@ -111,6 +112,7 @@ export default function MarketPage({ market }: MarketPageProps) {
         </section>
       </main>
       <Footer />
+      <BearMascot />
     </>
   );
 }

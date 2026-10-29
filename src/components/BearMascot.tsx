@@ -167,7 +167,8 @@ export default function BearMascot() {
       const max = document.documentElement.scrollHeight - window.innerHeight;
       const p = Math.max(0, Math.min(1, window.scrollY / Math.max(1, max)));
       el.style.top = `${18 + p * 60}vh`;
-      const contact = document.getElementById('contacto');
+      // Home has the #contacto form; subpages end with the yellow .page-cta block.
+      const contact = document.getElementById('contacto') ?? document.querySelector('.page-cta');
       if (contact) {
         const r = contact.getBoundingClientRect();
         setHidden(r.top < window.innerHeight * 0.85 && r.bottom > 80);

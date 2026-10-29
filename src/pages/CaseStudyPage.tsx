@@ -3,6 +3,7 @@ import type { ReactNode } from 'react';
 import { useReveal } from '../hooks/useReveal';
 import Nav from '../components/Nav';
 import Footer from '../components/Footer';
+import BearMascot from '../components/BearMascot';
 import PageHero from '../components/PageHero';
 import { CASE_STUDIES } from '../data/caseStudies';
 import { casePath, CASES_PATH } from '../routes';
@@ -165,6 +166,7 @@ export default function CaseStudyPage({ study }: CaseStudyPageProps) {
         </section>
       </main>
       <Footer />
+      <BearMascot />
     </>
   );
 }
