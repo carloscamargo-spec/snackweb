@@ -90,7 +90,7 @@ a { color: inherit; text-decoration: none; }
   font-size: 13.5px; font-weight: 500; letter-spacing: -0.005em;
   color: var(--neutral-300);
 }
-.nav-links a { position: relative; padding: 6px 0; transition: color 180ms ease; }
+.nav-links a { position: relative; padding: 6px 0; transition: color 180ms ease; white-space: nowrap; }
 .nav-links a:hover { color: var(--white); }
 .nav-links a::after {
   content: ""; position: absolute; left: 0; bottom: 0;
@@ -121,7 +121,9 @@ a { color: inherit; text-decoration: none; }
   text-transform: uppercase; color: var(--neutral-400); white-space: nowrap;
 }
 @media (min-width: 1080px) { .nav-links { display: flex; } .nav-clock { display: inline; } }
-@media (min-width: 880px) and (max-width: 1079.98px) { .nav-links { display: flex; gap: 24px; font-size: 12.5px; } }
+@media (min-width: 880px) and (max-width: 1079.98px) { .nav-links { display: flex; gap: 16px; font-size: 12px; } }
+/* Seven links plus the clock: tighten the gap until there is room for 36px. */
+@media (min-width: 1080px) and (max-width: 1399.98px) { .nav-links { gap: 22px; } }
 
 /* ── Hamburger button ── */
 .nav-burger {
@@ -736,3 +738,5 @@ video::-internal-media-controls-overflow-button {
 /* The hero tagline sits bottom-left and the index bottom-right; on narrow
    screens they fill the bottom edge, so the scroll cue would overlap them. */
 @media (max-width: 900px) { .scroll-cue { display: none; } }
+.contact-markets a { text-decoration: underline; text-underline-offset: 3px; text-decoration-thickness: 1px; }
+.contact-markets a:hover { text-decoration-thickness: 2px; }
