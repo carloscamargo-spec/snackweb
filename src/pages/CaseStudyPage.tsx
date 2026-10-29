@@ -24,7 +24,7 @@ export default function CaseStudyPage({ study }: CaseStudyPageProps) {
           <nav className="case-crumbs" aria-label="Migas de pan">
             <a href="/">Inicio</a>
             <span aria-hidden="true">/</span>
-            <a href="/casos">Casos</a>
+            <a href="/casos/">Casos</a>
             <span aria-hidden="true">/</span>
             <span>{study.shortTitle}</span>
           </nav>

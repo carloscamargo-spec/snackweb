@@ -57,7 +57,7 @@ for (const route of PRERENDER_PATHS) {
 const today = new Date().toISOString().slice(0, 10);
 const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-${PRERENDER_PATHS.map((p) => `  <url>\n    <loc>${SITE_URL}${p === '/' ? '/' : p}</loc>\n    <lastmod>${today}</lastmod>\n  </url>`).join('\n')}
+${PRERENDER_PATHS.map((p) => `  <url>\n    <loc>${SITE_URL}${p}</loc>\n    <lastmod>${today}</lastmod>\n  </url>`).join('\n')}
 </urlset>
 `;
 await writeFile(path.join(distDir, 'sitemap.xml'), sitemap);

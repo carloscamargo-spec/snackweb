@@ -6,7 +6,7 @@ const ORG_ID = `${SITE_URL}/#organization`;
 
 export type Route =
   | { kind: 'home'; path: '/' }
-  | { kind: 'cases'; path: '/casos' }
+  | { kind: 'cases'; path: '/casos/' }
   | { kind: 'case'; path: string; study: CaseStudy }
   | { kind: 'not-found'; path: string };
 
@@ -18,15 +18,18 @@ export interface PageMeta {
   jsonLd: object[];
 }
 
-export const casePath = (slug: string): string => `/casos/${slug}`;
+// Netlify serves folder pages at their trailing-slash URL (and 301s the bare one),
+// so every internal link, canonical and sitemap entry uses the trailing slash.
+export const CASES_PATH = '/casos/';
+export const casePath = (slug: string): string => `/casos/${slug}/`;
 
 // Every URL the build prerenders, in sitemap order.
-export const PRERENDER_PATHS: string[] = ['/', '/casos', ...CASE_STUDIES.map((c) => casePath(c.slug))];
+export const PRERENDER_PATHS: string[] = ['/', CASES_PATH, ...CASE_STUDIES.map((c) => casePath(c.slug))];
 
 export function resolveRoute(pathname: string): Route {
   const path = pathname.replace(/\/+$/, '') || '/';
   if (path === '/') return { kind: 'home', path: '/' };
-  if (path === '/casos') return { kind: 'cases', path: '/casos' };
+  if (path === '/casos') return { kind: 'cases', path: CASES_PATH };
   const match = path.match(/^\/casos\/([a-z0-9-]+)$/);
   const study = match ? findCaseStudy(match[1]) : undefined;
   return study ? { kind: 'case', path, study } : { kind: 'not-found', path };
@@ -52,7 +55,7 @@ const breadcrumbs = (items: { name: string; path: string }[]) => ({
     '@type': 'ListItem',
     position: i + 1,
     name: it.name,
-    item: `${SITE_URL}${it.path === '/' ? '/' : it.path}`,
+    item: `${SITE_URL}${it.path}`,
   })),
 });
 
@@ -65,14 +68,14 @@ export function metaFor(route: Route): PageMeta | null {
       title: 'Casos de éxito en betting y gaming | Snack & Soda',
       description:
         'Campañas para Wplay, YaJuego y LUKA: contenido de entretenimiento para casas de apuestas en Colombia y LATAM. Mira los casos de Snack & Soda.',
-      canonical: `${SITE_URL}/casos`,
+      canonical: `${SITE_URL}${CASES_PATH}`,
       ogType: 'website',
       jsonLd: [
         {
           '@context': 'https://schema.org',
           '@type': 'CollectionPage',
           name: 'Casos de éxito de Snack & Soda',
-          url: `${SITE_URL}/casos`,
+          url: `${SITE_URL}${CASES_PATH}`,
           inLanguage: 'es',
           publisher: { '@id': ORG_ID },
           mainEntity: {
@@ -87,7 +90,7 @@ export function metaFor(route: Route): PageMeta | null {
         },
         breadcrumbs([
           { name: 'Inicio', path: '/' },
-          { name: 'Casos', path: '/casos' },
+          { name: 'Casos', path: CASES_PATH },
         ]),
       ],
     };
@@ -121,7 +124,7 @@ export function metaFor(route: Route): PageMeta | null {
       },
       breadcrumbs([
         { name: 'Inicio', path: '/' },
-        { name: 'Casos', path: '/casos' },
+        { name: 'Casos', path: CASES_PATH },
         { name: study.shortTitle, path: casePath(study.slug) },
       ]),
     ],

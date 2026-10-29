@@ -119,7 +119,7 @@ export default function Cases() {
       </div>
 
       <div className="cases-all">
-        <a href="/casos">Ver todos los casos de éxito <span aria-hidden="true">→</span></a>
+        <a href="/casos/">Ver todos los casos de éxito <span aria-hidden="true">→</span></a>
       </div>
     </section>
   );
