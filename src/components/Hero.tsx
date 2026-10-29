@@ -27,8 +27,9 @@ export default function Hero() {
           <div className="hero-sub">
             {/* The page's H1 is the value proposition; the wordmark above is the brand, not the topic. */}
             <h1 className="hero-tagline reveal delay-1">
-              <strong>A content agency for ads haters.</strong> Convertimos betting &amp; gaming en
-              entretenimiento que la audiencia decide ver — no que tolera.
+              <strong>A content agency for ads haters.</strong> Agencia de contenido y publicidad para
+              casas de apuestas, iGaming y entretenimiento: convertimos el betting en contenido que la
+              audiencia decide ver — no que tolera.
             </h1>
             <div className="hero-index reveal delay-2">
               <span>Issue N° 026</span>
