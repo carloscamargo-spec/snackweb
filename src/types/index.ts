@@ -46,6 +46,8 @@ export interface CaseStudy {
   slug: string;
   client: string;
   title: string;
+  /** Lowercase display headline in the home's voice: [plain part, highlighted part]. */
+  displayTitle: [string, string];
   shortTitle: string;
   market: string;
   years: string;
