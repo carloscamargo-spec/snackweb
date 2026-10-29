@@ -1,4 +1,6 @@
 import { useState } from 'react';
+import { MARKETS } from '../data/markets';
+import { marketPath } from '../routes';
 
 type SubmitStatus = 'idle' | 'sent' | 'error';
 
@@ -78,7 +80,14 @@ export default function Contact() {
             </div>
             <div>
               <div className="key">Mercados</div>
-              <div className="val">MX · CO · PE · CL · BR · AR</div>
+              <div className="val contact-markets">
+                {MARKETS.map((m, i) => (
+                  <span key={m.slug}>
+                    {i > 0 && ' · '}
+                    <a href={marketPath(m.slug)} title={`Publicidad para casas de apuestas en ${m.country}`}>{m.countryCode}</a>
+                  </span>
+                ))}
+              </div>
             </div>
           </div>
         </div>

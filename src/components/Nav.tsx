@@ -6,6 +6,7 @@ const LINKS = [
   { href: '/#verdad',     num: '03', label: 'Datos' },
   { href: '/#framework',  num: '05', label: 'Framework' },
   { href: '/#casos',      num: '06', label: 'Casos' },
+  { href: '/mercados/',   num: 'LATAM', label: 'Mercados' },
   { href: '/#contacto',   num: '07', label: 'Hablemos' },
 ];
 
