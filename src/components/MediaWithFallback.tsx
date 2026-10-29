@@ -21,6 +21,13 @@ export default function MediaWithFallback({
     const video = videoRef.current;
     if (!video) return;
 
+    // The page HTML is prerendered, so a missing video can fail before React
+    // hydrates and attaches onError. Catch that case here and show the fallback.
+    if (video.error || video.networkState === HTMLMediaElement.NETWORK_NO_SOURCE) {
+      setErrored(true);
+      return;
+    }
+
     // Set every muted/autoplay/playsinline flag both as property and attribute.
     // iOS Safari requires the HTML attributes to be present in the DOM,
     // not just the JS properties that React sets.
