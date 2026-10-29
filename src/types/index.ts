@@ -60,3 +60,16 @@ export interface CaseStudy {
   videos: CaseVideo[];
   awards?: string[];
 }
+
+export interface Market {
+  slug: string;
+  country: string;
+  /** ISO 3166-1 alpha-2, used in schema.org areaServed. */
+  countryCode: string;
+  displayTitle: [string, string];
+  summary: string;
+  audience: string;
+  regulation: string;
+  approach: string[];
+  caseSlugs: string[];
+}

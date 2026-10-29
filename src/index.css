@@ -729,3 +729,4 @@ video::-internal-media-controls-overflow-button {
   .page-more-list a { grid-template-columns: 1fr auto; }
   .page-more-client { grid-column: 1 / -1; }
 }
+.page-note { margin-top: 18px !important; font-size: 13px; color: var(--neutral-500); }

@@ -1,6 +1,8 @@
 import App from './App';
 import CaseStudyPage from './pages/CaseStudyPage';
 import CasesIndexPage from './pages/CasesIndexPage';
+import MarketPage from './pages/MarketPage';
+import MarketsIndexPage from './pages/MarketsIndexPage';
 import { resolveRoute } from './routes';
 
 interface RootProps {
@@ -13,5 +15,7 @@ export default function Root({ path }: RootProps) {
   const route = resolveRoute(path);
   if (route.kind === 'case') return <CaseStudyPage study={route.study} />;
   if (route.kind === 'cases') return <CasesIndexPage />;
+  if (route.kind === 'market') return <MarketPage market={route.market} />;
+  if (route.kind === 'markets') return <MarketsIndexPage />;
   return <App />;
 }
